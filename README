@@ -6,9 +6,9 @@ LOOC is library with object oriented structure of c.
 
 *   Ruby like syntex
 
-        struct String * string = String.new("A string.");
-        puts(string->text);
-        String.free(string);
+        init_Parent();
+        struct Parent * obj = new(ParentClass);
+        parent_method(obj);
 
 #   How to get LOOC
 

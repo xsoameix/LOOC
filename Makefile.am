@@ -1,2 +1,2 @@
 bin_PROGRAMS = bin/looc
-bin_looc_SOURCES = looc.c string.c
+bin_looc_SOURCES = looc.c
