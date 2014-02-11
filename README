@@ -2,13 +2,15 @@
 
 LOOC is library with object oriented structure of c.
 
-#   Features of LOOC
+#   Example
 
-*   Ruby like syntex
-
-        init_Parent();
-        struct Parent * obj = new(ParentClass);
-        parent_method(obj);
+    hash_init();
+    void * hash = new(HashClass, 3);
+    hash_set(hash, "key1", "data1");
+    hash_set(hash, "key2", "data2");
+    hash_set(hash, "key3", "data3");
+    puts(hash_get(hash, "key3"));
+    delete(hash);
 
 #   How to get LOOC
 
