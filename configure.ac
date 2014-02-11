@@ -16,6 +16,7 @@ AC_PROG_CC
 AC_CHECK_HEADERS([stdlib.h string.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
+AC_PROG_CC_C99
 
 # Checks for library functions.
 AC_FUNC_MALLOC

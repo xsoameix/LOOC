@@ -1,2 +1,2 @@
 bin_PROGRAMS = bin/looc
-bin_looc_SOURCES = looc.c class.c parent.c
+bin_looc_SOURCES = looc.c class.c hash.c

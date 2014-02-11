@@ -1,0 +1,249 @@
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+
+#include "include/hash.struct.h"
+#include "include/hash.h"
+
+struct HashClass {
+    const struct Class class;
+    bool (* hash_set)(void * self, char * key, void * data);
+    void * (* hash_get)(void * self, char * key);
+};
+
+enum ACTION {
+    Set,
+    Get
+};
+
+static const void * HashMetaClass;
+const void * HashClass;
+static const void * HashEntriesClass;
+
+static void * HashMetaClass_ctor(void * self, va_list * args_ptr);
+static void * HashClass_ctor(void * self, va_list * args_ptr);
+static void   HashClass_dtor(void * self);
+static void * HashEntriesClass_ctor(void * self, va_list * args_ptr);
+static void   HashEntriesClass_dtor(void * self);
+static bool   HashClass_set(void * self, char * key, void * data);
+static void * HashClass_get(void * self, char * key);
+
+static bool isprime(size_t n);
+static bool search(struct Hash * hash, char * key, void * data, void ** retdata, enum ACTION action);
+static void rehash(struct Hash * hash);
+
+void hash_init(void) {
+    if(!HashMetaClass) {
+        HashMetaClass = new(
+                Class,
+                Class,
+                "HashMetaClass",
+                sizeof(struct HashClass),
+                ctor,     HashMetaClass_ctor);
+    }
+    if(!HashClass) {
+        HashClass = new(
+                HashMetaClass,
+                ObjectClass,
+                "HashClass",
+                sizeof(struct Hash),
+                ctor,     HashClass_ctor,
+                dtor,     HashClass_dtor,
+                hash_set, HashClass_set,
+                hash_get, HashClass_get);
+    }
+    if(!HashEntriesClass) {
+        HashEntriesClass = new(
+                Class,
+                ObjectClass,
+                "HashEntriesClass",
+                sizeof(struct HashEntries),
+                ctor,     HashEntriesClass_ctor,
+                dtor,     HashEntriesClass_dtor);
+    }
+}
+
+static
+void * HashMetaClass_ctor(void * self, va_list * args_ptr) {
+    struct HashClass * class = self;
+
+    // inherit
+    const struct Class * superclass = super_of(class);
+    superclass->ctor(class, args_ptr);
+
+    // override
+    va_list args;
+    va_copy(args, * args_ptr);
+    typedef void (* func)();
+    func select;
+    while(select = va_arg(args, func)) {
+        func method = va_arg(args, func);
+        if(select == (func) hash_set) {
+            *(func *) &class->hash_set = method;
+        } else if(select == (func) hash_get) {
+            *(func *) &class->hash_get = method;
+        }
+    }
+    return class;
+}
+
+static
+void * HashClass_ctor(void * self, va_list * args_ptr) {
+    struct Hash * hash = self;
+    size_t size = va_arg(* args_ptr, size_t);
+    size |= 1; // Because most prime is odd, so make it odd.
+    if(!isprime(size)) {
+        size += 2;
+    }
+    hash->size = size;
+    hash->filled = 0;
+    hash->entries = new(HashEntriesClass, size);
+    return hash;
+}
+
+static
+void HashClass_dtor(void * self) {
+    struct Hash * hash = self;
+    delete(hash->entries);
+}
+
+static
+void * HashEntriesClass_ctor(void * self, va_list * args_ptr) {
+    struct HashEntries * entries = self;
+    size_t size = va_arg(* args_ptr, size_t);
+    entries->entries = malloc(size * sizeof(struct HashEntry));
+    return entries;
+}
+
+static
+void HashEntriesClass_dtor(void * self) {
+    struct HashEntries * entries = self;
+    free(entries->entries);
+}
+
+bool hash_set(void * self, char * key, void * data) {
+    struct Hash * hash = self;
+    const struct HashClass * class = (struct HashClass *) hash->class;
+    return class->hash_set(hash, key, data);
+}
+
+void * hash_get(void * self, char * key) {
+    struct Hash * hash = self;
+    const struct HashClass * class = (struct HashClass *) hash->class;
+    return class->hash_get(hash, key);
+}
+
+static
+bool HashClass_set(void * self, char * key, void * data) {
+    struct Hash * hash = self;
+    return search(hash, key, data, NULL, Set);
+}
+
+static
+void * HashClass_get(void * self, char * key) {
+    struct Hash * hash = self;
+    void * result;
+    if(search(hash, key, NULL, &result, Get)) {
+        return result;
+    }
+    return NULL;
+}
+
+static
+bool isprime(size_t n) {
+    size_t div = 3;
+    while(div * div < n && n % div != 0) {
+        div += 2;
+    }
+    return n % div != 0;
+}
+
+static
+bool search(struct Hash * hash, char * key, void * data, void ** retdata, enum ACTION action) {
+    size_t len = strlen(key);
+    size_t hval = len;
+    for(size_t i = 0; i < len; i++) {
+        hval <<= 4;
+        hval += key[i];
+    }
+    size_t idx = hval % hash->size; // First hash function.
+
+    // There are 3 possibilities:
+    // 1. The slot is used, same key.
+    // 2. The slot is used, different key.
+    // 3. The slot is not used.
+    struct HashEntry * entries = hash->entries->entries;
+
+    // Possibility 1.
+    if(entries[idx].used == hval &&
+            strcmp(key, entries[idx].key) == 0) {
+        // Possibility 2.
+    } else if(entries[idx].used) {
+        // The second hash function can't be 0.
+        size_t hval2 = 1 + hval % (hash->size - 1),
+               first_idx = idx;
+        do {
+            idx = (idx + hval2) % hash->size;
+            if(idx == first_idx) {
+                // If all of slots are Possibility 2. The end is here.
+                return false;
+            }
+
+            // Possibility 1.
+            if(entries[idx].used == hval &&
+                    strcmp(key, entries[idx].key) == 0) {
+                break;
+            }
+            // Possibility 2.
+        } while(entries[idx].used);
+    }
+    // Possibility 1, 3.
+    struct HashEntry * select = &entries[idx];
+    switch(action) {
+    case Set:
+        // Possibility 3.
+        if(!select->used) {
+            hash->filled++;
+        }
+        select->used = hval;
+        select->key = key;
+        select->data = data;
+        float ratio = 0.8;
+        if(((float) hash->filled) / hash->size > ratio) {
+            rehash(hash);
+        }
+        break;
+    case Get:
+        // Possibility 3.
+        if(!select->used) {
+            return false;
+        }
+        // Possibility 1.
+        *retdata = select->data;
+        break;
+    }
+    return true;
+}
+
+static
+void rehash(struct Hash * hash) {
+    size_t old_size = hash->size;
+    // Make the new size is double and odd.
+    size_t new_size = old_size * 2 + 1;
+    while(!isprime(new_size)) {
+        new_size += 2;
+    }
+    hash->size = new_size;
+    hash->filled = 0;
+
+    // Create the new entry array.
+    struct HashEntries * old_entries = hash->entries;
+    struct HashEntry * entries = old_entries->entries;
+    hash->entries = new(HashEntriesClass, new_size);
+    for(size_t i = 0; i < old_size; i++) {
+        if(entries[i].used) {
+            hash_set(hash, entries[i].key, entries[i].data);
+        }
+    }
+    delete(old_entries);
+}
