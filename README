@@ -4,13 +4,15 @@ LOOC is library with object oriented structure of c.
 
 #   Example
 
-    hash_init();
-    void * hash = new(Hash, 3);
-    hash_set(hash, "key1", "data1");
-    hash_set(hash, "key2", "data2");
-    hash_set(hash, "key3", "data3");
-    puts(hash_get(hash, "key3"));
-    delete(hash);
+*   Hash
+
+        hash_init();
+        void * hash = new(Hash, 3);
+        hash_set(hash, "key1", "data1");
+        hash_set(hash, "key2", "data2");
+        hash_set(hash, "key3", "data3");
+        puts(hash_get(hash, "key3"));
+        delete(hash);
 
 #   How to get LOOC
 
