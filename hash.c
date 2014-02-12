@@ -16,55 +16,55 @@ enum ACTION {
     Get
 };
 
-static const void * HashMetaClass;
-const void * HashClass;
-static const void * HashEntriesClass;
+static const void * HashClass;
+const void * Hash;
+static const void * HashEntries;
 
-static void * HashMetaClass_ctor(void * self, va_list * args_ptr);
 static void * HashClass_ctor(void * self, va_list * args_ptr);
-static void   HashClass_dtor(void * self);
-static void * HashEntriesClass_ctor(void * self, va_list * args_ptr);
-static void   HashEntriesClass_dtor(void * self);
-static bool   HashClass_set(void * self, char * key, void * data);
-static void * HashClass_get(void * self, char * key);
+static void * Hash_ctor(void * self, va_list * args_ptr);
+static void   Hash_dtor(void * self);
+static void * HashEntries_ctor(void * self, va_list * args_ptr);
+static void   HashEntries_dtor(void * self);
+static bool   Hash_set(void * self, char * key, void * data);
+static void * Hash_get(void * self, char * key);
 
 static bool isprime(size_t n);
 static bool search(struct Hash * hash, char * key, void * data, void ** retdata, enum ACTION action);
 static void rehash(struct Hash * hash);
 
 void hash_init(void) {
-    if(!HashMetaClass) {
-        HashMetaClass = new(
-                Class,
-                Class,
-                "HashMetaClass",
-                sizeof(struct HashClass),
-                ctor,     HashMetaClass_ctor);
-    }
     if(!HashClass) {
         HashClass = new(
-                HashMetaClass,
-                ObjectClass,
-                "HashClass",
-                sizeof(struct Hash),
-                ctor,     HashClass_ctor,
-                dtor,     HashClass_dtor,
-                hash_set, HashClass_set,
-                hash_get, HashClass_get);
-    }
-    if(!HashEntriesClass) {
-        HashEntriesClass = new(
                 Class,
-                ObjectClass,
-                "HashEntriesClass",
+                Class,
+                "HashClass",
+                sizeof(struct HashClass),
+                ctor,     HashClass_ctor);
+    }
+    if(!Hash) {
+        Hash = new(
+                HashClass,
+                Object,
+                "Hash",
+                sizeof(struct Hash),
+                ctor,     Hash_ctor,
+                dtor,     Hash_dtor,
+                hash_set, Hash_set,
+                hash_get, Hash_get);
+    }
+    if(!HashEntries) {
+        HashEntries = new(
+                Class,
+                Object,
+                "HashEntries",
                 sizeof(struct HashEntries),
-                ctor,     HashEntriesClass_ctor,
-                dtor,     HashEntriesClass_dtor);
+                ctor,     HashEntries_ctor,
+                dtor,     HashEntries_dtor);
     }
 }
 
 static
-void * HashMetaClass_ctor(void * self, va_list * args_ptr) {
+void * HashClass_ctor(void * self, va_list * args_ptr) {
     struct HashClass * class = self;
 
     // inherit
@@ -88,7 +88,7 @@ void * HashMetaClass_ctor(void * self, va_list * args_ptr) {
 }
 
 static
-void * HashClass_ctor(void * self, va_list * args_ptr) {
+void * Hash_ctor(void * self, va_list * args_ptr) {
     struct Hash * hash = self;
     size_t size = va_arg(* args_ptr, size_t);
     size |= 1; // Because most prime is odd, so make it odd.
@@ -97,18 +97,18 @@ void * HashClass_ctor(void * self, va_list * args_ptr) {
     }
     hash->size = size;
     hash->filled = 0;
-    hash->entries = new(HashEntriesClass, size);
+    hash->entries = new(HashEntries, size);
     return hash;
 }
 
 static
-void HashClass_dtor(void * self) {
+void   Hash_dtor(void * self) {
     struct Hash * hash = self;
     delete(hash->entries);
 }
 
 static
-void * HashEntriesClass_ctor(void * self, va_list * args_ptr) {
+void * HashEntries_ctor(void * self, va_list * args_ptr) {
     struct HashEntries * entries = self;
     size_t size = va_arg(* args_ptr, size_t);
     entries->entries = malloc(size * sizeof(struct HashEntry));
@@ -116,12 +116,12 @@ void * HashEntriesClass_ctor(void * self, va_list * args_ptr) {
 }
 
 static
-void HashEntriesClass_dtor(void * self) {
+void   HashEntries_dtor(void * self) {
     struct HashEntries * entries = self;
     free(entries->entries);
 }
 
-bool hash_set(void * self, char * key, void * data) {
+bool   hash_set(void * self, char * key, void * data) {
     struct Hash * hash = self;
     const struct HashClass * class = (struct HashClass *) hash->class;
     return class->hash_set(hash, key, data);
@@ -134,13 +134,13 @@ void * hash_get(void * self, char * key) {
 }
 
 static
-bool HashClass_set(void * self, char * key, void * data) {
+bool   Hash_set(void * self, char * key, void * data) {
     struct Hash * hash = self;
     return search(hash, key, data, NULL, Set);
 }
 
 static
-void * HashClass_get(void * self, char * key) {
+void * Hash_get(void * self, char * key) {
     struct Hash * hash = self;
     void * result;
     if(search(hash, key, NULL, &result, Get)) {
@@ -239,7 +239,7 @@ void rehash(struct Hash * hash) {
     // Create the new entry array.
     struct HashEntries * old_entries = hash->entries;
     struct HashEntry * entries = old_entries->entries;
-    hash->entries = new(HashEntriesClass, new_size);
+    hash->entries = new(HashEntries, new_size);
     for(size_t i = 0; i < old_size; i++) {
         if(entries[i].used) {
             hash_set(hash, entries[i].key, entries[i].data);

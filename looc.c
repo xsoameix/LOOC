@@ -4,7 +4,7 @@
 
 int main(void) {
     hash_init();
-    void * hash = new(HashClass, 3);
+    void * hash = new(Hash, 3);
     hash_set(hash, "key1", "data1");
     hash_set(hash, "key2", "data2");
     hash_set(hash, "key3", "data3");

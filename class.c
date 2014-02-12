@@ -7,8 +7,8 @@
 
 static void * Class_ctor(void * self, va_list * args_ptr);
 static void   Class_dtor(void * self);
-static void * ObjectClass_ctor(void * self, va_list * args_ptr);
-static void   ObjectClass_dtor(void * self);
+static void * Object_ctor(void * self, va_list * args_ptr);
+static void   Object_dtor(void * self);
 
 static struct Class classes[2] = {
     {
@@ -21,15 +21,15 @@ static struct Class classes[2] = {
     }, {
         classes,
         0,
-        "ObjectClass",
+        "Object",
         sizeof(struct Object),
-        ObjectClass_ctor,
-        ObjectClass_dtor
+        Object_ctor,
+        Object_dtor
     }
 };
 
 const void * Class = classes;
-const void * ObjectClass = classes + 1;
+const void * Object = classes + 1;
 
 void * new(const void * klass, ...) {
     const struct Class * class = klass;
@@ -42,7 +42,7 @@ void * new(const void * klass, ...) {
     return obj;
 }
 
-void delete(void * obj) {
+void   delete(void * obj) {
     const struct Object * object = obj;
     dtor(obj);
     free(obj);
@@ -53,7 +53,7 @@ void * ctor(void * self, va_list * args) {
     return class->class->ctor(class, args);
 }
 
-void dtor(void * self) {
+void   dtor(void * self) {
     struct Class * class = self;
     return class->class->dtor(class);
 }
@@ -103,14 +103,14 @@ void * Class_ctor(void * self, va_list * args_ptr) {
 }
 
 static
-void Class_dtor(void * self) {
+void   Class_dtor(void * self) {
 }
 
 static
-void * ObjectClass_ctor(void * self, va_list * args_ptr) {
+void * Object_ctor(void * self, va_list * args_ptr) {
     return self;
 }
 
 static
-void ObjectClass_dtor(void * self) {
+void   Object_dtor(void * self) {
 }

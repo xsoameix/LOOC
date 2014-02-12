@@ -5,7 +5,7 @@
 #include <stddef.h>
 
 extern const void * Class;
-extern const void * ObjectClass;
+extern const void * Object;
 
 void * new(const void * klass, ...);
 void   delete(void * obj);

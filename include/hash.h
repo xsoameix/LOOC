@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include "include/class.h"
 
-extern const void * HashClass;
+extern const void * Hash;
 
 void hash_init(void);
 bool hash_set(void * self, char * key, void * data);
