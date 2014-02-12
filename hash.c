@@ -7,7 +7,7 @@
 
 struct HashClass {
     const struct Class class;
-    bool (* hash_set)(void * self, char * key, void * data);
+    bool   (* hash_set)(void * self, char * key, void * data);
     void * (* hash_get)(void * self, char * key);
 };
 
