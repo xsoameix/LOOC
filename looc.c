@@ -4,14 +4,8 @@
 
 int main(void) {
     hash_init();
-    void * hash = new(Hash, 3);
-    hash_set(hash, "key1", "data1");
-    hash_set(hash, "key2", "data2");
-    hash_set(hash, "key3", "data3");
-    hash_set(hash, "key4", "data4");
-    hash_set(hash, "key5", "data5");
-    hash_set(hash, "key6", "data6");
-    puts(hash_get(hash, "key3"));
+    void * hash = new(Hash, 1);
+    hash_set(hash, "a", "b");
+    hash_get(hash, "a");
     delete(hash);
-    return 0;
 }
