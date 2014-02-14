@@ -7,7 +7,7 @@ LOOC is library with object oriented structure of c.
 *   Hash
 
         hash_init();
-        void * hash = new(Hash, 1);
+        void * hash = new(Hash);
         hash_set(hash, "a", "b");
         hash_get(hash, "a");
         delete(hash);

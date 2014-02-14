@@ -31,7 +31,8 @@ static struct Class classes[2] = {
 const void * Class = classes;
 const void * Object = classes + 1;
 
-void * new(const void * klass, ...) {
+void *
+new(const void * klass, ...) {
     const struct Class * class = klass;
     va_list args;
     va_start(args, klass);
@@ -42,39 +43,45 @@ void * new(const void * klass, ...) {
     return obj;
 }
 
-void   delete(void * obj) {
+void
+delete(void * obj) {
     const struct Object * object = obj;
     dtor(obj);
     free(obj);
 }
 
-void * ctor(void * self, va_list * args) {
+void *
+ctor(void * self, va_list * args) {
     struct Class * class = self;
     return class->class->ctor(class, args);
 }
 
-void   dtor(void * self) {
+void
+dtor(void * self) {
     struct Class * class = self;
     return class->class->dtor(class);
 }
 
-size_t size_of(const void * obj) {
+size_t
+size_of(const void * obj) {
     const struct Object * object = obj;
     return object->class->size;
 }
 
-const void * super_of(const void * obj) {
+const void *
+super_of(const void * obj) {
     const struct Object * object = obj;
     return object->class->super;
 }
 
-char * class_name_of(const void * obj) {
+char *
+class_name_of(const void * obj) {
     const struct Object * object = obj;
     return object->class->name;
 }
 
-static
-void * Class_ctor(void * self, va_list * args_ptr) {
+static void *
+Class_ctor(void * self, va_list * args_ptr) {
     struct Class * class = self;
     class->super = va_arg(* args_ptr, struct Class *);
     class->name = va_arg(* args_ptr, char *);
@@ -102,15 +109,15 @@ void * Class_ctor(void * self, va_list * args_ptr) {
     return class;
 }
 
-static
-void   Class_dtor(void * self) {
+static void
+Class_dtor(void * self) {
 }
 
-static
-void * Object_ctor(void * self, va_list * args_ptr) {
+static void *
+Object_ctor(void * self, va_list * args_ptr) {
     return self;
 }
 
-static
-void   Object_dtor(void * self) {
+static void
+Object_dtor(void * self) {
 }

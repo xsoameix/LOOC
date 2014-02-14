@@ -17,7 +17,7 @@ enum ACTION {
 };
 
 static const void * HashClass;
-const void * Hash;
+       const void * Hash;
 static const void * HashEntries;
 
 static void * HashClass_ctor(void * self, va_list * args_ptr);
@@ -63,8 +63,8 @@ void hash_init(void) {
     }
 }
 
-static
-void * HashClass_ctor(void * self, va_list * args_ptr) {
+static void *
+HashClass_ctor(void * self, va_list * args_ptr) {
     struct HashClass * class = self;
 
     // inherit
@@ -87,10 +87,10 @@ void * HashClass_ctor(void * self, va_list * args_ptr) {
     return class;
 }
 
-static
-void * Hash_ctor(void * self, va_list * args_ptr) {
+static void *
+Hash_ctor(void * self, va_list * args_ptr) {
     struct Hash * hash = self;
-    size_t size = va_arg(* args_ptr, size_t);
+    size_t size = 5;
     size |= 1; // Because most prime is odd, so make it odd.
     if(!isprime(size)) {
         size += 2;
@@ -101,46 +101,48 @@ void * Hash_ctor(void * self, va_list * args_ptr) {
     return hash;
 }
 
-static
-void   Hash_dtor(void * self) {
+static void
+Hash_dtor(void * self) {
     struct Hash * hash = self;
     delete(hash->entries);
 }
 
-static
-void * HashEntries_ctor(void * self, va_list * args_ptr) {
+static void *
+HashEntries_ctor(void * self, va_list * args_ptr) {
     struct HashEntries * entries = self;
     size_t size = va_arg(* args_ptr, size_t);
     entries->entries = malloc(size * sizeof(struct HashEntry));
     return entries;
 }
 
-static
-void   HashEntries_dtor(void * self) {
+static void
+HashEntries_dtor(void * self) {
     struct HashEntries * entries = self;
     free(entries->entries);
 }
 
-bool   hash_set(void * self, char * key, void * data) {
+bool
+hash_set(void * self, char * key, void * data) {
     struct Hash * hash = self;
     const struct HashClass * class = (struct HashClass *) hash->class;
     return class->hash_set(hash, key, data);
 }
 
-void * hash_get(void * self, char * key) {
+void *
+hash_get(void * self, char * key) {
     struct Hash * hash = self;
     const struct HashClass * class = (struct HashClass *) hash->class;
     return class->hash_get(hash, key);
 }
 
-static
-bool   Hash_set(void * self, char * key, void * data) {
+static bool
+Hash_set(void * self, char * key, void * data) {
     struct Hash * hash = self;
     return search(hash, key, data, NULL, Set);
 }
 
-static
-void * Hash_get(void * self, char * key) {
+static void *
+Hash_get(void * self, char * key) {
     struct Hash * hash = self;
     void * result;
     if(search(hash, key, NULL, &result, Get)) {
@@ -149,8 +151,8 @@ void * Hash_get(void * self, char * key) {
     return NULL;
 }
 
-static
-bool isprime(size_t n) {
+static bool
+isprime(size_t n) {
     size_t div = 3;
     while(div * div < n && n % div != 0) {
         div += 2;
@@ -158,8 +160,8 @@ bool isprime(size_t n) {
     return n % div != 0;
 }
 
-static
-bool search(struct Hash * hash, char * key, void * data, void ** retdata, enum ACTION action) {
+static bool
+search(struct Hash * hash, char * key, void * data, void ** retdata, enum ACTION action) {
     size_t len = strlen(key);
     size_t hval = len;
     for(size_t i = 0; i < len; i++) {
@@ -225,8 +227,8 @@ bool search(struct Hash * hash, char * key, void * data, void ** retdata, enum A
     return true;
 }
 
-static
-void rehash(struct Hash * hash) {
+static void
+rehash(struct Hash * hash) {
     size_t old_size = hash->size;
     // Make the new size is double and odd.
     size_t new_size = old_size * 2 + 1;
