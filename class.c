@@ -9,6 +9,8 @@ static void * Class_ctor(void * self, va_list * args_ptr);
 static void   Class_dtor(void * self);
 static void * Object_ctor(void * self, va_list * args_ptr);
 static void   Object_dtor(void * self);
+static bool   Object_equals(void * self, void * obj);
+static size_t Object_hash_code(void * self);
 
 static struct Class classes[2] = {
     {
@@ -17,14 +19,18 @@ static struct Class classes[2] = {
         "Class",
         sizeof(struct Class),
         Class_ctor,
-        Class_dtor
+        Class_dtor,
+        Object_equals,
+        Object_hash_code
     }, {
         classes,
         0,
         "Object",
         sizeof(struct Object),
         Object_ctor,
-        Object_dtor
+        Object_dtor,
+        Object_equals,
+        Object_hash_code
     }
 };
 
@@ -60,6 +66,18 @@ void
 dtor(void * self) {
     struct Class * class = self;
     return class->class->dtor(class);
+}
+
+bool
+equals(void * self, void * obj) {
+    struct Object * object = self;
+    return object->class->equals(object, obj);
+}
+
+size_t
+hash_code(void * self) {
+    struct Object * object = self;
+    return object->class->hash_code(object);
 }
 
 size_t
@@ -104,6 +122,10 @@ Class_ctor(void * self, va_list * args_ptr) {
             *(func *) &class->ctor = method;
         } else if(select == (func) dtor) {
             *(func *) &class->dtor = method;
+        } else if(select == (func) equals) {
+            *(func *) &class->equals = method;
+        } else if(select == (func) hash_code) {
+            *(func *) &class->hash_code = method;
         }
     }
     return class;
@@ -120,4 +142,14 @@ Object_ctor(void * self, va_list * args_ptr) {
 
 static void
 Object_dtor(void * self) {
+}
+
+static bool
+Object_equals(void * self, void * obj) {
+    return self == obj;
+}
+
+static size_t
+Object_hash_code(void * self) {
+    return (size_t) self;
 }

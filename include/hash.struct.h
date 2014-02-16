@@ -7,7 +7,7 @@
 
 struct HashEntry {
     size_t used;
-    char * key;
+    void * key;
     void * data;
 };
 

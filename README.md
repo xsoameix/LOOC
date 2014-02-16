@@ -4,12 +4,23 @@ LOOC is library with object oriented structure of c.
 
 #   Example
 
+*   String
+
+        string_init();
+        void * a = new(String, "a");
+        string_puts(a);
+        delete(a);
+
 *   Hash
+
+        string_init();
+        void * a = new(String, "a");
+        void * b = new(String, "b");
 
         hash_init();
         void * hash = new(Hash);
-        hash_set(hash, "a", "b");
-        hash_get(hash, "a");
+        hash_set(hash, a, b);
+        hash_get(hash, a);
         delete(hash);
 
 #   How to get LOOC

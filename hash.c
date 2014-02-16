@@ -1,14 +1,15 @@
 #include <stdlib.h>
-#include <string.h>
 #include <stdio.h>
 
 #include "include/hash.struct.h"
 #include "include/hash.h"
+#include "include/string.struct.h"
+#include "include/string.h"
 
 struct HashClass {
     const struct Class class;
-    bool   (* hash_set)(void * self, char * key, void * data);
-    void * (* hash_get)(void * self, char * key);
+    bool   (* hash_set)(void * self, void * key, void * data);
+    void * (* hash_get)(void * self, void * key);
 };
 
 enum ACTION {
@@ -25,11 +26,11 @@ static void * Hash_ctor(void * self, va_list * args_ptr);
 static void   Hash_dtor(void * self);
 static void * HashEntries_ctor(void * self, va_list * args_ptr);
 static void   HashEntries_dtor(void * self);
-static bool   Hash_set(void * self, char * key, void * data);
-static void * Hash_get(void * self, char * key);
+static bool   Hash_set(void * self, void * key, void * data);
+static void * Hash_get(void * self, void * key);
 
 static bool isprime(size_t n);
-static bool search(struct Hash * hash, char * key, void * data, void ** retdata, enum ACTION action);
+static bool search(struct Hash * hash, void * key, void * data, void ** retdata, enum ACTION action);
 static void rehash(struct Hash * hash);
 
 void hash_init(void) {
@@ -122,27 +123,27 @@ HashEntries_dtor(void * self) {
 }
 
 bool
-hash_set(void * self, char * key, void * data) {
+hash_set(void * self, void * key, void * data) {
     struct Hash * hash = self;
     const struct HashClass * class = (struct HashClass *) hash->class;
     return class->hash_set(hash, key, data);
 }
 
 void *
-hash_get(void * self, char * key) {
+hash_get(void * self, void * key) {
     struct Hash * hash = self;
     const struct HashClass * class = (struct HashClass *) hash->class;
     return class->hash_get(hash, key);
 }
 
 static bool
-Hash_set(void * self, char * key, void * data) {
+Hash_set(void * self, void * key, void * data) {
     struct Hash * hash = self;
     return search(hash, key, data, NULL, Set);
 }
 
 static void *
-Hash_get(void * self, char * key) {
+Hash_get(void * self, void * key) {
     struct Hash * hash = self;
     void * result;
     if(search(hash, key, NULL, &result, Get)) {
@@ -161,13 +162,9 @@ isprime(size_t n) {
 }
 
 static bool
-search(struct Hash * hash, char * key, void * data, void ** retdata, enum ACTION action) {
-    size_t len = strlen(key);
-    size_t hval = len;
-    for(size_t i = 0; i < len; i++) {
-        hval <<= 4;
-        hval += key[i];
-    }
+search(struct Hash * hash, void * _key, void * data, void ** retdata, enum ACTION action) {
+    struct Object * key = _key;
+    size_t hval = hash_code(key);
     size_t idx = hval % hash->size; // First hash function.
 
     // There are 3 possibilities:
@@ -178,7 +175,7 @@ search(struct Hash * hash, char * key, void * data, void ** retdata, enum ACTION
 
     // Possibility 1.
     if(entries[idx].used == hval &&
-            strcmp(key, entries[idx].key) == 0) {
+            equals(key, entries[idx].key)) {
         // Possibility 2.
     } else if(entries[idx].used) {
         // The second hash function can't be 0.
@@ -193,7 +190,7 @@ search(struct Hash * hash, char * key, void * data, void ** retdata, enum ACTION
 
             // Possibility 1.
             if(entries[idx].used == hval &&
-                    strcmp(key, entries[idx].key) == 0) {
+                    equals(key, entries[idx].key)) {
                 break;
             }
             // Possibility 2.
@@ -208,7 +205,7 @@ search(struct Hash * hash, char * key, void * data, void ** retdata, enum ACTION
             hash->filled++;
         }
         select->used = hval;
-        select->key = key;
+        select->key  = key;
         select->data = data;
         float ratio = 0.8;
         if(((float) hash->filled) / hash->size > ratio) {
