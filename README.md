@@ -23,6 +23,15 @@ LOOC is library with object oriented structure of c.
         hash_get(hash, a);
         delete(hash);
 
+*   Array
+
+        array_init();
+        void * ary = new(Array);
+        array_push(ary, a);
+        array_push(ary, b);
+        array_each(ary, array_print);
+        delete(ary);
+
 #   How to get LOOC
 
 Use following command:

@@ -19,7 +19,8 @@ static void   String_puts(void * self);
 static bool   String_equals(void * _self, void * _obj);
 static size_t String_hash_code(void * self);
 
-void string_init(void) {
+void
+string_init(void) {
     if(!StringClass) {
         StringClass = new(
                 Class,

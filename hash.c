@@ -24,16 +24,17 @@ static const void * HashEntries;
 static void * HashClass_ctor(void * self, va_list * args_ptr);
 static void * Hash_ctor(void * self, va_list * args_ptr);
 static void   Hash_dtor(void * self);
-static void * HashEntries_ctor(void * self, va_list * args_ptr);
-static void   HashEntries_dtor(void * self);
 static bool   Hash_set(void * self, void * key, void * data);
 static void * Hash_get(void * self, void * key);
+static void * HashEntries_ctor(void * self, va_list * args_ptr);
+static void   HashEntries_dtor(void * self);
 
 static bool isprime(size_t n);
 static bool search(struct Hash * hash, void * key, void * data, void ** retdata, enum ACTION action);
 static void rehash(struct Hash * hash);
 
-void hash_init(void) {
+void
+hash_init(void) {
     if(!HashClass) {
         HashClass = new(
                 Class,
@@ -75,8 +76,7 @@ HashClass_ctor(void * self, va_list * args_ptr) {
     // override
     va_list args;
     va_copy(args, * args_ptr);
-    typedef void (* func)();
-    func select;
+    typedef void (* func)(); func select;
     while(select = va_arg(args, func)) {
         func method = va_arg(args, func);
         if(select == (func) hash_set) {
@@ -108,6 +108,36 @@ Hash_dtor(void * self) {
     delete(hash->entries);
 }
 
+bool
+hash_set(void * self, void * key, void * data) {
+    struct Hash * hash = self;
+    const struct HashClass * class = (struct HashClass *) hash->class;
+    return class->hash_set(hash, key, data);
+}
+
+static bool
+Hash_set(void * self, void * key, void * data) {
+    struct Hash * hash = self;
+    return search(hash, key, data, NULL, Set);
+}
+
+void *
+hash_get(void * self, void * key) {
+    struct Hash * hash = self;
+    const struct HashClass * class = (struct HashClass *) hash->class;
+    return class->hash_get(hash, key);
+}
+
+static void *
+Hash_get(void * self, void * key) {
+    struct Hash * hash = self;
+    void * result;
+    if(search(hash, key, NULL, &result, Get)) {
+        return result;
+    }
+    return NULL;
+}
+
 static void *
 HashEntries_ctor(void * self, va_list * args_ptr) {
     struct HashEntries * entries = self;
@@ -120,36 +150,6 @@ static void
 HashEntries_dtor(void * self) {
     struct HashEntries * entries = self;
     free(entries->entries);
-}
-
-bool
-hash_set(void * self, void * key, void * data) {
-    struct Hash * hash = self;
-    const struct HashClass * class = (struct HashClass *) hash->class;
-    return class->hash_set(hash, key, data);
-}
-
-void *
-hash_get(void * self, void * key) {
-    struct Hash * hash = self;
-    const struct HashClass * class = (struct HashClass *) hash->class;
-    return class->hash_get(hash, key);
-}
-
-static bool
-Hash_set(void * self, void * key, void * data) {
-    struct Hash * hash = self;
-    return search(hash, key, data, NULL, Set);
-}
-
-static void *
-Hash_get(void * self, void * key) {
-    struct Hash * hash = self;
-    void * result;
-    if(search(hash, key, NULL, &result, Get)) {
-        return result;
-    }
-    return NULL;
 }
 
 static bool
