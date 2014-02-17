@@ -2,9 +2,9 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.68])
-AC_INIT([LOOC], [0.0.1], [xsoameix@gmail.com])
+AC_INIT([libooc], [0.0.1], [xsoameix@gmail.com])
 AM_INIT_AUTOMAKE
-AC_CONFIG_SRCDIR([looc.c])
+AC_CONFIG_SRCDIR([libooc.c])
 AC_CONFIG_HEADERS([config.h])
 
 # Checks for programs.

@@ -1,6 +1,6 @@
-#   What's LOOC
+#   What's libooc
 
-LOOC is library with object oriented structure of c.
+libooc is library with object oriented written in c.
 
 #   Example
 
@@ -32,11 +32,11 @@ LOOC is library with object oriented structure of c.
         array_each(ary, array_print);
         delete(ary);
 
-#   How to get LOOC
+#   How to get libooc
 
 Use following command:
 
-    $ git clone git@github.com:xsoameix/LOOC.git
+    $ git clone git@github.com:xsoameix/libooc.git
 
 #   How to compile and install
 

@@ -1,2 +1,2 @@
-bin_PROGRAMS = bin/looc
-bin_looc_SOURCES = looc.c class.c hash.c string.c array.c
+bin_PROGRAMS = bin/libooc
+bin_libooc_SOURCES = libooc.c class.c hash.c string.c array.c
