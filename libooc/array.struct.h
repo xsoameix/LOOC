@@ -1,7 +1,7 @@
 #ifndef ARRAY_STRUCT_H
 #define ARRAY_STRUCT_H
 
-#include "include/class.struct.h"
+#include <libooc/class.struct.h>
 
 struct ArrayValues {
     const struct Class * class;

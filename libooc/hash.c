@@ -1,10 +1,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "include/hash.struct.h"
-#include "include/hash.h"
-#include "include/string.struct.h"
-#include "include/string.h"
+#include "hash.struct.h"
+#include "hash.h"
+#include "string.struct.h"
+#include "string.conflict.h"
 
 struct HashClass {
     const struct Class class;

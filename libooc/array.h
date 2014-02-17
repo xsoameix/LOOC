@@ -1,7 +1,7 @@
 #ifndef ARRAY_H
 #define ARRAY_H
 
-#include "include/class.h"
+#include <libooc/class.h>
 
 extern const void * Array;
 

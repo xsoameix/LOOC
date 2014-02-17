@@ -2,7 +2,7 @@
 
 libooc is library with object oriented written in c.
 
-#   Example
+#   Examples
 
 *   String
 
@@ -46,6 +46,22 @@ Use following command:
 2.  Run `./configure`, which will generate config.h and Makefile.
 
 3.  Run `make`.
+
+4.  Run `make install`.
+
+#   Usage
+
+*   Hash
+
+        #include <libooc/hash.h>
+
+*   Array
+
+        #include <libooc/array.h>
+
+*   String
+
+        #include <libooc/string.conflict.h>
 
 #   Copying
 

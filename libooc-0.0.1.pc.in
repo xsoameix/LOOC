@@ -1,0 +1,10 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: libooc
+Description: C Object-Oriented Library
+Version: @VERSION@
+Libs: -L${libdir} -looc-0.0.1
+Cflags: -I${includedir}/libooc-0.0.1

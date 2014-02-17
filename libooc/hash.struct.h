@@ -3,7 +3,7 @@
 
 #include <stdarg.h>
 
-#include "include/class.struct.h"
+#include <libooc/class.struct.h>
 
 struct HashEntry {
     size_t used;

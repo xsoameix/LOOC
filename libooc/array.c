@@ -1,8 +1,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "include/array.struct.h"
-#include "include/array.h"
+#include "array.struct.h"
+#include "array.h"
 
 struct ArrayClass {
     const struct Class * class;

@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 
-#include "include/class.h"
+#include <libooc/class.h>
 
 extern const void * Hash;
 

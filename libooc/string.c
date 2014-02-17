@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "include/string.struct.h"
-#include "include/string.h"
+#include "string.struct.h"
+#include "string.conflict.h"
 
 struct StringClass {
     const struct Class class;

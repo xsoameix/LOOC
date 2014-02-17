@@ -1,10 +1,12 @@
 *~
 *.o
+*.a
 
 # autotools
 
 /bin/
 /.deps
+/*/.deps
 /autom4te.cache/
 /aclocal.m4
 /autoscan.log

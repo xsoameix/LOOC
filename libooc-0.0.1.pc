@@ -1,0 +1,10 @@
+prefix=/usr/local
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: libooc
+Description: C Object-Oriented Library
+Version: 0.0.1
+Libs: -L${libdir} -looc-0.0.1
+Cflags: -I${includedir}/libooc-0.0.1

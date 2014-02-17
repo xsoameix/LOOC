@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "include/class.struct.h"
-#include "include/class.h"
+#include "class.struct.h"
+#include "class.h"
 
 static void * Class_ctor(void * self, va_list * args_ptr);
 static void   Class_dtor(void * self);

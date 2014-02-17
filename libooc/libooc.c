@@ -1,8 +1,8 @@
 #include <stdio.h>
 
-#include "include/string.h"
-#include "include/hash.h"
-#include "include/array.h"
+#include "string.h"
+#include "hash.h"
+#include "array.h"
 
 static void
 array_print(void * string, size_t index) {
