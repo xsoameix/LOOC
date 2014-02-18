@@ -5,7 +5,7 @@
 #include "array.h"
 
 struct ArrayClass {
-    const struct Class * class;
+    const struct Class class;
     void (* array_push)(void * self, void * data);
     void (* array_each)(void * self, void (* iter)(void * obj, size_t index));
 };
