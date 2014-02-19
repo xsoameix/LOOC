@@ -11,6 +11,14 @@ libooc is library with object oriented written in c.
         string_puts(a);
         delete(a);
 
+*   Static String
+
+        value_init();
+        Value a;
+        value_type(&a, StaticString);
+        value_set_str(&a, "a");
+        value_get_str(&a);
+
 *   Hash
 
         string_init();
@@ -62,6 +70,10 @@ Use following command:
 *   String
 
         #include <libooc/string.conflict.h>
+
+*   Static String
+
+        #include <libooc/value.h>
 
 #   Copying
 

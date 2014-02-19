@@ -8,4 +8,6 @@ struct String {
     char * self;
 };
 
+extern const void * StringClass;
+
 #endif

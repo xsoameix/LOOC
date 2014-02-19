@@ -5,6 +5,8 @@
 # autotools
 
 /bin/
+/libooc/bin/
+/tests/bin/
 /.deps
 /*/.deps
 /autom4te.cache/

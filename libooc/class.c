@@ -53,7 +53,6 @@ void
 delete(void * obj) {
     const struct Object * object = obj;
     dtor(obj);
-    free(obj);
 }
 
 void *
@@ -142,6 +141,7 @@ Object_ctor(void * self, va_list * args_ptr) {
 
 static void
 Object_dtor(void * self) {
+    free(self);
 }
 
 static bool

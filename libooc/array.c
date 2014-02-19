@@ -6,8 +6,9 @@
 
 struct ArrayClass {
     const struct Class class;
-    void (* array_push)(void * self, void * data);
-    void (* array_each)(void * self, void (* iter)(void * obj, size_t index));
+    void * (* array_get)(void * self, size_t index);
+    void   (* array_push)(void * self, void * data);
+    void   (* array_each)(void * self, void (* iter)(void * obj, size_t index));
 };
 
 static const void * ArrayClass;
@@ -17,6 +18,7 @@ static const void * ArrayValues;
 static void * ArrayClass_ctor(void * self, va_list * args_ptr);
 static void * Array_ctor(void * self, va_list * args_ptr);
 static void   Array_dtor(void * self);
+static void * Array_get(void * self, size_t index);
 static void   Array_push(void * self, void * data);
 static void   Array_each(void * self, void (* iter)(void * obj, size_t index));
 static void * ArrayValues_ctor(void * _self, va_list * args_ptr);
@@ -91,6 +93,20 @@ static void
 Array_dtor(void * self) {
     struct Array * ary = self;
     delete(ary->values);
+    free(ary);
+}
+
+void *
+array_get(void * self, size_t index) {
+    struct Array * ary = self;
+    const struct ArrayClass * class = (struct ArrayClass *) ary->class;
+    return class->array_get(ary, index);
+}
+
+static void *
+Array_get(void * self, size_t index) {
+    struct Array * ary = self;
+    return ary->len > index ? ary->values->values[index] : NULL;
 }
 
 void
@@ -142,4 +158,5 @@ static void
 ArrayValues_dtor(void * self) {
     struct ArrayValues * values = self;
     free(values->values);
+    free(values);
 }

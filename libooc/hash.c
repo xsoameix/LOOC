@@ -106,6 +106,7 @@ static void
 Hash_dtor(void * self) {
     struct Hash * hash = self;
     delete(hash->entries);
+    free(hash);
 }
 
 bool
@@ -150,6 +151,7 @@ static void
 HashEntries_dtor(void * self) {
     struct HashEntries * entries = self;
     free(entries->entries);
+    free(entries);
 }
 
 static bool

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "string.struct.h"
@@ -9,8 +10,8 @@ struct StringClass {
     void (* string_puts)(void * self);
 };
 
-static const void * StringClass;
-       const void * String;
+const void * StringClass;
+const void * String;
 
 static void * StringClass_ctor(void * self, va_list * args_ptr);
 static void * String_ctor(void * self, va_list * args_ptr);
@@ -74,6 +75,7 @@ String_ctor(void * self, va_list * args_ptr) {
 
 static void
 String_dtor(void * self) {
+    free(self);
 }
 
 void

@@ -27,6 +27,7 @@ AC_CONFIG_FILES([
 libooc-0.0.1.pc
 Makefile
 libooc/Makefile
+tests/Makefile
 ])
 
 AC_OUTPUT
