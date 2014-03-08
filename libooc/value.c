@@ -21,9 +21,11 @@ value_init(void) {
                 Object,
                 "StaticString",
                 sizeof(Value),
+                false,
                 dtor,        StaticString_dtor,
                 equals,      StaticString_equals,
-                hash_code,   StaticString_hash_code);
+                hash_code,   StaticString_hash_code,
+                0);
     }
 }
 

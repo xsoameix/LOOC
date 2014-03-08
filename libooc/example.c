@@ -4,6 +4,7 @@
 #include "string.conflict.h"
 #include "hash.h"
 #include "array.h"
+#include "file.h"
 
 static void
 array_print(void * value, size_t index) {
@@ -34,9 +35,17 @@ int main(void) {
     array_init();
     void * ary = new(Array);
     array_push(ary, &a);
-    array_push(ary, b);
-    array_each(ary, array_print);
+    array_unshift(ary, b);
+    void * d = array_shift(ary);
+    string_puts(d);
     delete(ary);
 
     delete(b);
+
+    // file
+    file_init();
+    void * file = new(File, "libooc/example");
+    void * content = file_read(file);
+    string_puts(content);
+    delete(file);
 }

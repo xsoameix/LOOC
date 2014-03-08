@@ -7,18 +7,19 @@
 
 struct StringClass {
     const struct Class class;
-    void (* string_puts)(void * self);
+    void   (* string_puts)(void * self);
 };
 
-const void * StringClass;
-const void * String;
+static const void * StringClass;
+       const void * String;
 
-static void * StringClass_ctor(void * self, va_list * args_ptr);
-static void * String_ctor(void * self, va_list * args_ptr);
+static void   StringClass_ctor(void * self, va_list * args_ptr);
+static void   String_ctor(void * self, va_list * args_ptr);
 static void   String_dtor(void * self);
-static void   String_puts(void * self);
 static bool   String_equals(void * _self, void * _obj);
 static size_t String_hash_code(void * self);
+static char * String_inspect(void * self);
+static void   String_puts(void * self);
 
 void
 string_init(void) {
@@ -28,7 +29,9 @@ string_init(void) {
                 Class,
                 "StringClass",
                 sizeof(struct StringClass),
-                ctor,        StringClass_ctor);
+                false,
+                ctor,        StringClass_ctor,
+                0);
     }
     if(!String) {
         String = new(
@@ -36,15 +39,18 @@ string_init(void) {
                 Object,
                 "String",
                 sizeof(struct String),
+                false,
                 ctor,        String_ctor,
                 dtor,        String_dtor,
                 equals,      String_equals,
                 hash_code,   String_hash_code,
-                string_puts, String_puts);
+                inspect,     String_inspect,
+                string_puts, String_puts,
+                0);
     }
 }
 
-static void *
+static void
 StringClass_ctor(void * self, va_list * args_ptr) {
     struct StringClass * class = self;
 
@@ -63,32 +69,17 @@ StringClass_ctor(void * self, va_list * args_ptr) {
             *(func *) &class->string_puts = method;
         }
     }
-    return class;
 }
 
-static void *
+static void
 String_ctor(void * self, va_list * args_ptr) {
     struct String * string = self;
     string->self = va_arg(* args_ptr, char *);
-    return string;
 }
 
 static void
 String_dtor(void * self) {
     free(self);
-}
-
-void
-string_puts(void * self) {
-    struct String * string = self;
-    const struct StringClass * class = (struct StringClass *) string->class;
-    return class->string_puts(string);
-}
-
-static void
-String_puts(void * self) {
-    struct String * string = self;
-    puts(string->self);
 }
 
 static bool
@@ -109,4 +100,23 @@ String_hash_code(void * self) {
         hval += string->self[i];
     }
     return hval;
+}
+
+static char *
+String_inspect(void * self) {
+    struct String * string = self;
+    return string->self;
+}
+
+void
+string_puts(void * self) {
+    struct String * string = self;
+    const struct StringClass * class = (struct StringClass *) string->class;
+    class->string_puts(string);
+}
+
+static void
+String_puts(void * self) {
+    struct String * string = self;
+    puts(string->self);
 }

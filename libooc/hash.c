@@ -3,13 +3,14 @@
 
 #include "hash.struct.h"
 #include "hash.h"
-#include "string.struct.h"
-#include "string.conflict.h"
+
+#define HASH_DEFAULT_SIZE 5
 
 struct HashClass {
     const struct Class class;
     bool   (* hash_set)(void * self, void * key, void * data);
     void * (* hash_get)(void * self, void * key);
+    void   (* hash_each)(void * self, void (* iter)(void * key, void * data));
 };
 
 enum ACTION {
@@ -19,15 +20,13 @@ enum ACTION {
 
 static const void * HashClass;
        const void * Hash;
-static const void * HashEntries;
 
-static void * HashClass_ctor(void * self, va_list * args_ptr);
-static void * Hash_ctor(void * self, va_list * args_ptr);
+static void   HashClass_ctor(void * self, va_list * args_ptr);
+static void   Hash_ctor(void * self, va_list * args_ptr);
 static void   Hash_dtor(void * self);
 static bool   Hash_set(void * self, void * key, void * data);
 static void * Hash_get(void * self, void * key);
-static void * HashEntries_ctor(void * self, va_list * args_ptr);
-static void   HashEntries_dtor(void * self);
+static void   Hash_each(void * self, void (* iter)(void * key, void * data));
 
 static bool isprime(size_t n);
 static bool search(struct Hash * hash, void * key, void * data, void ** retdata, enum ACTION action);
@@ -41,7 +40,9 @@ hash_init(void) {
                 Class,
                 "HashClass",
                 sizeof(struct HashClass),
-                ctor,     HashClass_ctor);
+                false,
+                ctor,     HashClass_ctor,
+                0);
     }
     if(!Hash) {
         Hash = new(
@@ -49,23 +50,17 @@ hash_init(void) {
                 Object,
                 "Hash",
                 sizeof(struct Hash),
-                ctor,     Hash_ctor,
-                dtor,     Hash_dtor,
-                hash_set, Hash_set,
-                hash_get, Hash_get);
-    }
-    if(!HashEntries) {
-        HashEntries = new(
-                Class,
-                Object,
-                "HashEntries",
-                sizeof(struct HashEntries),
-                ctor,     HashEntries_ctor,
-                dtor,     HashEntries_dtor);
+                false,
+                ctor,      Hash_ctor,
+                dtor,      Hash_dtor,
+                hash_set,  Hash_set,
+                hash_get,  Hash_get,
+                hash_each, Hash_each,
+                0);
     }
 }
 
-static void *
+static void
 HashClass_ctor(void * self, va_list * args_ptr) {
     struct HashClass * class = self;
 
@@ -83,29 +78,24 @@ HashClass_ctor(void * self, va_list * args_ptr) {
             *(func *) &class->hash_set = method;
         } else if(select == (func) hash_get) {
             *(func *) &class->hash_get = method;
+        } else if(select == (func) hash_each) {
+            *(func *) &class->hash_each = method;
         }
     }
-    return class;
 }
 
-static void *
+static void
 Hash_ctor(void * self, va_list * args_ptr) {
     struct Hash * hash = self;
-    size_t size = 5;
-    size |= 1; // Because most prime is odd, so make it odd.
-    if(!isprime(size)) {
-        size += 2;
-    }
-    hash->size = size;
+    hash->size = HASH_DEFAULT_SIZE;
     hash->filled = 0;
-    hash->entries = new(HashEntries, size);
-    return hash;
+    hash->entries = malloc(HASH_DEFAULT_SIZE * (sizeof(struct Hash)));
 }
 
 static void
 Hash_dtor(void * self) {
     struct Hash * hash = self;
-    delete(hash->entries);
+    free(hash->entries);
     free(hash);
 }
 
@@ -139,19 +129,21 @@ Hash_get(void * self, void * key) {
     return NULL;
 }
 
-static void *
-HashEntries_ctor(void * self, va_list * args_ptr) {
-    struct HashEntries * entries = self;
-    size_t size = va_arg(* args_ptr, size_t);
-    entries->entries = malloc(size * sizeof(struct HashEntry));
-    return entries;
+void
+hash_each(void * self, void (* iter)(void * key, void * data)) {
+    struct Hash * hash = self;
+    const struct HashClass * class = (struct HashClass *) hash->class;
+    class->hash_each(hash, iter);
 }
 
 static void
-HashEntries_dtor(void * self) {
-    struct HashEntries * entries = self;
-    free(entries->entries);
-    free(entries);
+Hash_each(void * self, void (* iter)(void * key, void * data)) {
+    struct Hash * hash = self;
+    struct HashEntry * entries = hash->entries;
+    for(size_t i = 0, size = hash->size; i < size; i++) {
+        struct HashEntry entry = entries[i];
+        if(entry.used) iter(entry.key, entry.data);
+    }
 }
 
 static bool
@@ -167,39 +159,39 @@ static bool
 search(struct Hash * hash, void * _key, void * data, void ** retdata, enum ACTION action) {
     struct Object * key = _key;
     size_t hval = hash_code(key);
-    size_t idx = hval % hash->size; // First hash function.
+    size_t i = hval % hash->size; // First hash function.
 
     // There are 3 possibilities:
     // 1. The slot is used, same key.
     // 2. The slot is used, different key.
     // 3. The slot is not used.
-    struct HashEntry * entries = hash->entries->entries;
+    struct HashEntry * entries = hash->entries;
 
     // Possibility 1.
-    if(entries[idx].used == hval &&
-            equals(key, entries[idx].key)) {
+    if(entries[i].used == hval &&
+            equals(key, entries[i].key)) {
         // Possibility 2.
-    } else if(entries[idx].used) {
+    } else if(entries[i].used) {
         // The second hash function can't be 0.
-        size_t hval2 = 1 + hval % (hash->size - 1),
-               first_idx = idx;
+        size_t hval2 = 1 + hval % (hash->size - 1);
+        size_t first = i;
         do {
-            idx = (idx + hval2) % hash->size;
-            if(idx == first_idx) {
+            i = (i + hval2) % hash->size;
+            if(i == first) {
                 // If all of slots are Possibility 2. The end is here.
                 return false;
             }
 
             // Possibility 1.
-            if(entries[idx].used == hval &&
-                    equals(key, entries[idx].key)) {
+            if(entries[i].used == hval &&
+                    equals(key, entries[i].key)) {
                 break;
             }
             // Possibility 2.
-        } while(entries[idx].used);
+        } while(entries[i].used);
     }
     // Possibility 1, 3.
-    struct HashEntry * select = &entries[idx];
+    struct HashEntry * select = &entries[i];
     switch(action) {
     case Set:
         // Possibility 3.
@@ -220,7 +212,7 @@ search(struct Hash * hash, void * _key, void * data, void ** retdata, enum ACTIO
             return false;
         }
         // Possibility 1.
-        *retdata = select->data;
+        * retdata = select->data;
         break;
     }
     return true;
@@ -228,23 +220,19 @@ search(struct Hash * hash, void * _key, void * data, void ** retdata, enum ACTIO
 
 static void
 rehash(struct Hash * hash) {
-    size_t old_size = hash->size;
     // Make the new size is double and odd.
-    size_t new_size = old_size * 2 + 1;
-    while(!isprime(new_size)) {
-        new_size += 2;
-    }
-    hash->size = new_size;
+    size_t old_size = hash->size;
+    size_t size = old_size * 2 + 1;
+    while(!isprime(size)) size += 2;
+    hash->size = size;
     hash->filled = 0;
 
     // Create the new entry array.
-    struct HashEntries * old_entries = hash->entries;
-    struct HashEntry * entries = old_entries->entries;
-    hash->entries = new(HashEntries, new_size);
+    struct HashEntry * entries = hash->entries;
+    hash->entries = malloc(size * (sizeof(struct Hash)));
     for(size_t i = 0; i < old_size; i++) {
-        if(entries[i].used) {
-            hash_set(hash, entries[i].key, entries[i].data);
-        }
+        struct HashEntry entry = entries[i];
+        if(entry.used) hash_set(hash, entry.key, entry.data);
     }
-    delete(old_entries);
+    free(entries);
 }
