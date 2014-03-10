@@ -10,13 +10,13 @@ static void double_capa(struct Array * self, size_t offset);
 
 def_class(Object, CLASS_SIZE_FIXED)
 
-def_override(ctor) {
+def(ctor, override) {
     self->len = 0;
     self->capa = DEFAULT_SIZE;
     self->values = malloc(DEFAULT_SIZE * sizeof(void *));
 }
 
-def_override(dtor) {
+def(dtor, override) {
     free(self->values);
     free(self);
 }

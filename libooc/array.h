@@ -29,6 +29,6 @@
 #define ARRAY_unshift unshift, void,   (void * data, data)
 #define ARRAY_shift   shift,   void *
 #define ARRAY_each    each,    void,   (void (* iter)(void * obj, size_t index), iter)
-def_methods()
+def_public_methods()
 
 #endif

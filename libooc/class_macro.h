@@ -161,7 +161,7 @@
     void class ## _init(void); \
     LOOP_MULTIPLE(METHOD_PUBLIC_DECLARE, void, __VA_ARGS__)
 #define METHODS_(...) METHODS__(__VA_ARGS__)
-#define def_methods() METHODS_(CLASS, CLASS_MACRO(METHODS))
+#define def_public_methods() METHODS_(CLASS, CLASS_MACRO(METHODS))
 
 // === *.c ===
 // public macros:
@@ -178,10 +178,13 @@
     return _class->func(ARG_SELF_()LOOP_MULTIPLE(ARG_NAME, void, __VA_ARGS__));
 #define METHOD_CALL_(...) METHOD_CALL__(__VA_ARGS__)
 #define METHOD_CALL(...) METHOD_CALL_(CLASS, __VA_ARGS__)
-#define def(method) \
+#define def_SELECT_(name, n) name ## n
+#define def_SELECT(name, n) def_SELECT_(name, n)
+#define def_0(method, ...) \
     METHOD_PUBLIC_DEFINE(void, CLASS_MACRO(method)) { METHOD_CALL(CLASS_MACRO(method)) } \
     METHOD_STATIC_DEFINE(void, CLASS_MACRO(method))
-#define def_override(method) METHOD_STATIC_DEFINE(void, CLASS_MACRO(method))
+#define def_1(method, ...) METHOD_STATIC_DEFINE(void, CLASS_MACRO(method))
+#define def(method, ...) def_SELECT(def_, ARG_SIZE(__VA_ARGS__))(method, __VA_ARGS__)
 #define METHOD_POINTER_DEFINE__(class, void, name, ret, ...) ret (* name)(struct class * ARG_SELF()LOOP_L2_MULTIPLE(ARG_TYPE, __VA_ARGS__));
 #define METHOD_POINTER_DEFINE_(...) METHOD_POINTER_DEFINE__(__VA_ARGS__)
 #define METHOD_POINTER_DEFINE(...) METHOD_POINTER_DEFINE_(CLASS, __VA_ARGS__)
