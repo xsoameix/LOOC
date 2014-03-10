@@ -30,7 +30,7 @@ string_init(void) {
                 "StringClass",
                 sizeof(struct StringClass),
                 false,
-                ctor,        StringClass_ctor,
+                Object_ctor,      StringClass_ctor,
                 0);
     }
     if(!String) {
@@ -40,12 +40,12 @@ string_init(void) {
                 "String",
                 sizeof(struct String),
                 false,
-                ctor,        String_ctor,
-                dtor,        String_dtor,
-                equals,      String_equals,
-                hash_code,   String_hash_code,
-                inspect,     String_inspect,
-                string_puts, String_puts,
+                Object_ctor,      String_ctor,
+                Object_dtor,      String_dtor,
+                Object_equals,    String_equals,
+                Object_hash_code, String_hash_code,
+                Object_inspect,   String_inspect,
+                string_puts,      String_puts,
                 0);
     }
 }

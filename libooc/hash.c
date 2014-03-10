@@ -41,7 +41,7 @@ hash_init(void) {
                 "HashClass",
                 sizeof(struct HashClass),
                 false,
-                ctor,     HashClass_ctor,
+                Object_ctor, HashClass_ctor,
                 0);
     }
     if(!Hash) {
@@ -51,11 +51,11 @@ hash_init(void) {
                 "Hash",
                 sizeof(struct Hash),
                 false,
-                ctor,      Hash_ctor,
-                dtor,      Hash_dtor,
-                hash_set,  Hash_set,
-                hash_get,  Hash_get,
-                hash_each, Hash_each,
+                Object_ctor, Hash_ctor,
+                Object_dtor, Hash_dtor,
+                hash_set,    Hash_set,
+                hash_get,    Hash_get,
+                hash_each,   Hash_each,
                 0);
     }
 }
@@ -158,7 +158,7 @@ isprime(size_t n) {
 static bool
 search(struct Hash * hash, void * _key, void * data, void ** retdata, enum ACTION action) {
     struct Object * key = _key;
-    size_t hval = hash_code(key);
+    size_t hval = Object_hash_code(key);
     size_t i = hval % hash->size; // First hash function.
 
     // There are 3 possibilities:
@@ -169,7 +169,7 @@ search(struct Hash * hash, void * _key, void * data, void ** retdata, enum ACTIO
 
     // Possibility 1.
     if(entries[i].used == hval &&
-            equals(key, entries[i].key)) {
+            Object_equals(key, entries[i].key)) {
         // Possibility 2.
     } else if(entries[i].used) {
         // The second hash function can't be 0.
@@ -184,7 +184,7 @@ search(struct Hash * hash, void * _key, void * data, void ** retdata, enum ACTIO
 
             // Possibility 1.
             if(entries[i].used == hval &&
-                    equals(key, entries[i].key)) {
+                    Object_equals(key, entries[i].key)) {
                 break;
             }
             // Possibility 2.

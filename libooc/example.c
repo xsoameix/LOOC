@@ -32,11 +32,11 @@ int main(void) {
     delete(hash);
 
     // array
-    array_init();
+    Array_init();
     void * ary = new(Array);
-    array_push(ary, &a);
-    array_unshift(ary, b);
-    void * d = array_shift(ary);
+    Array_push(ary, &a);
+    Array_unshift(ary, b);
+    void * d = Array_shift(ary);
     string_puts(d);
     delete(ary);
 

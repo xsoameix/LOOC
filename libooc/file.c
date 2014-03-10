@@ -29,7 +29,7 @@ file_init(void) {
                 "FileClass",
                 sizeof(struct FileClass),
                 false,
-                ctor,          FileClass_ctor,
+                Object_ctor,   FileClass_ctor,
                 0);
     }
     if(!File) {
@@ -39,8 +39,8 @@ file_init(void) {
                 "File",
                 sizeof(struct File),
                 false,
-                ctor,          File_ctor,
-                dtor,          File_dtor,
+                Object_ctor,   File_ctor,
+                Object_dtor,   File_dtor,
                 file_read,     File_read,
                 0);
     }
@@ -77,7 +77,7 @@ static void
 File_dtor(void * self) {
     struct File * file = self;
     void * content = file->content;
-    free(inspect(content));
+    free(Object_inspect(content));
     delete(content);
     free(file);
 }

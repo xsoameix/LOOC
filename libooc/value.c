@@ -22,9 +22,9 @@ value_init(void) {
                 "StaticString",
                 sizeof(Value),
                 false,
-                dtor,        StaticString_dtor,
-                equals,      StaticString_equals,
-                hash_code,   StaticString_hash_code,
+                Object_dtor,      StaticString_dtor,
+                Object_equals,    StaticString_equals,
+                Object_hash_code, StaticString_hash_code,
                 0);
     }
 }

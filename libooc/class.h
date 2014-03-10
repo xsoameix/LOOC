@@ -11,11 +11,11 @@ extern const void * Object;
 
       void * new(const void * klass, ...);
       void   delete(void * obj);
-      void   ctor(void * self, va_list * args);
-      void   dtor(void * self);
-      bool   equals(void * self, void * obj);
-      size_t hash_code(void * self);
-      char * inspect(void * self);
+      void   Object_ctor(void * self, va_list * args);
+      void   Object_dtor(void * self);
+      bool   Object_equals(void * self, void * obj);
+      size_t Object_hash_code(void * self);
+      char * Object_inspect(void * self);
 const void * super_of(const void * obj);
 
 #endif

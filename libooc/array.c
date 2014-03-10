@@ -4,56 +4,56 @@
 #include "array.struct.h"
 #include "array.h"
 
-#define ARRAY_DEFAULT_SIZE 2
+#define DEFAULT_SIZE 2
 
 static void double_capa(struct Array * self, size_t offset);
 
-CLASS_INIT(Object, CLASS_SIZE_FIXED, (ARRAY_OVERRIDE_METHODS), (ARRAY_METHODS));
+def_class(Object, CLASS_SIZE_FIXED)
 
-METHOD_OVERRIDE(ARRAY_CTOR) {
+def_override(ctor) {
     self->len = 0;
-    self->capa = ARRAY_DEFAULT_SIZE;
-    self->values = malloc(ARRAY_DEFAULT_SIZE * sizeof(void *));
+    self->capa = DEFAULT_SIZE;
+    self->values = malloc(DEFAULT_SIZE * sizeof(void *));
 }
 
-METHOD_OVERRIDE(ARRAY_DTOR) {
+def_override(dtor) {
     free(self->values);
     free(self);
 }
 
-METHOD(ARRAY_LEN) {
+def(len) {
     return self->len;
 }
 
-METHOD(ARRAY_GET) {
+def(get) {
     return self->len > index ? self->values[index] : NULL;
 }
 
-METHOD(ARRAY_LAST) {
+def(last) {
     size_t len = self->len;
     return len > 0 ? self->values[len - 1] : NULL;
 }
 
-METHOD(ARRAY_PUSH) {
+def(push) {
     if(self->len == self->capa) {
         double_capa(self, 0);
     }
     self->values[self->len++] = data;
 }
 
-METHOD(ARRAY_POP) {
+def(pop) {
     if(self->len == 0) return NULL;
     return self->values[--self->len];
 }
 
-METHOD(ARRAY_UNSHIFT) {
+def(unshift) {
     if(self->len == self->capa) {
         double_capa(self, 1);
     }
     self->values[0] = data;
 }
 
-METHOD(ARRAY_SHIFT) {
+def(shift) {
     if(self->len == 0) return NULL;
     void ** values = self->values;
     void * element = values[0];
@@ -61,7 +61,7 @@ METHOD(ARRAY_SHIFT) {
     return element;
 }
 
-METHOD(ARRAY_EACH) {
+def(each) {
     void ** values = self->values;
     for(size_t i = 0, len = self->len; i < len; i++) {
         iter(values[i], i);
