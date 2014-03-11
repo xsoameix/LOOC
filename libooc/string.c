@@ -3,7 +3,6 @@
 #include <string.h>
 
 #include "string.struct.h"
-#include "string.conflict.h"
 
 def_class(Object)
 
@@ -33,8 +32,4 @@ def(hash_code, override) {
 
 def(inspect, override) {
     return self->chars;
-}
-
-def(puts) {
-    puts(self->chars);
 }

@@ -2,7 +2,6 @@
 #include <string.h>
 
 #include "array.struct.h"
-#include "array.h"
 
 #define DEFAULT_SIZE 2
 
@@ -34,7 +33,7 @@ def(last) {
 
 def(push) {
     if(self->len == self->capa) {
-        Array_double_capa(self, 0);
+        double_capa(self, 0);
     }
     self->values[self->len++] = data;
 }
@@ -46,7 +45,7 @@ def(pop) {
 
 def(unshift) {
     if(self->len == self->capa) {
-        Array_double_capa(self, 1);
+        double_capa(self, 1);
     }
     self->values[0] = data;
 }

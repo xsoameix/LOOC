@@ -1,37 +1,35 @@
-#ifndef ARRAY_H
-#define ARRAY_H
+#ifndef Array_H
+#define Array_H
 
 #include <libooc/class.h>
 
 #undef CLASS
-#undef PUBLIC_METHODS_PREFIX
 #define CLASS Array
-#define PUBLIC_METHODS_PREFIX ARRAY
-#define ARRAY_PUBLIC_OVERRIDE_METHODS \
-    (ARRAY_ctor), \
-    (ARRAY_dtor)
-#define ARRAY_PUBLIC_METHODS \
-    (ARRAY_len),     \
-    (ARRAY_get),     \
-    (ARRAY_last),    \
-    (ARRAY_push),    \
-    (ARRAY_pop),     \
-    (ARRAY_unshift), \
-    (ARRAY_shift),   \
-    (ARRAY_each)
-#define ARRAY_PRIVATE_METHODS \
-    (ARRAY_double_capa)
-#define ARRAY_ctor        ctor,        void,   (va_list * args_ptr, args_ptr)
-#define ARRAY_dtor        dtor,        void
-#define ARRAY_len         len,         size_t
-#define ARRAY_get         get,         void *, (size_t index, index)
-#define ARRAY_last        last,        void *
-#define ARRAY_push        push,        void,   (void * data, data)
-#define ARRAY_pop         pop,         void *
-#define ARRAY_unshift     unshift,     void,   (void * data, data)
-#define ARRAY_shift       shift,       void *
-#define ARRAY_each        each,        void,   (void (* iter)(void * obj, size_t index), iter)
-#define ARRAY_double_capa double_capa, void,   (size_t offset, offset)
+#define _Array_PUBLIC_OVERRIDE_METHODS \
+    (_Array_ctor), \
+    (_Array_dtor)
+#define _Array_PUBLIC_METHODS \
+    (_Array_len),     \
+    (_Array_get),     \
+    (_Array_last),    \
+    (_Array_push),    \
+    (_Array_pop),     \
+    (_Array_unshift), \
+    (_Array_shift),   \
+    (_Array_each)
+#define _Array_PRIVATE_METHODS \
+    (_Array_double_capa)
+#define _Array_ctor        ctor,        void,   (va_list * args_ptr, args_ptr)
+#define _Array_dtor        dtor,        void
+#define _Array_len         len,         size_t
+#define _Array_get         get,         void *, (size_t index, index)
+#define _Array_last        last,        void *
+#define _Array_push        push,        void,   (void * data, data)
+#define _Array_pop         pop,         void *
+#define _Array_unshift     unshift,     void,   (void * data, data)
+#define _Array_shift       shift,       void *
+#define _Array_each        each,        void,   (void (* iter)(void * obj, size_t index), iter)
+#define _Array_double_capa double_capa, void,   (size_t offset, offset)
 def_public_methods()
 
 #endif

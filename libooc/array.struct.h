@@ -2,6 +2,7 @@
 #define ARRAY_STRUCT_H
 
 #include <libooc/class.struct.h>
+#include <libooc/array.h>
 
 struct Array {
     const struct Class * class;
@@ -9,5 +10,7 @@ struct Array {
     size_t capa;
     void ** values;
 };
+
+def_class_struct()
 
 #endif

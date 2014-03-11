@@ -1,27 +1,23 @@
-#ifndef STRING_H
-#define STRING_H
+#ifndef String_H
+#define String_H
 
 #include <libooc/class.h>
 
 #undef CLASS
-#undef PUBLIC_METHODS_PREFIX
 #define CLASS String
-#define PUBLIC_METHODS_PREFIX STRING
-#define STRING_PUBLIC_OVERRIDE_METHODS \
-    (STRING_ctor),      \
-    (STRING_dtor),      \
-    (STRING_equals),    \
-    (STRING_hash_code), \
-    (STRING_inspect)
-#define STRING_PUBLIC_METHODS \
-    (STRING_puts)
-#define STRING_PRIVATE_METHODS
-#define STRING_ctor      ctor,      void,   (va_list * args_ptr, args_ptr)
-#define STRING_dtor      dtor,      void
-#define STRING_equals    equals,    bool,   (void * _obj, _obj)
-#define STRING_hash_code hash_code, size_t
-#define STRING_inspect   inspect,   char *
-#define STRING_puts      puts,      void
+#define _String_PUBLIC_OVERRIDE_METHODS \
+    (_String_ctor),      \
+    (_String_dtor),      \
+    (_String_equals),    \
+    (_String_hash_code), \
+    (_String_inspect)
+#define _String_PUBLIC_METHODS
+#define _String_PRIVATE_METHODS
+#define _String_ctor      ctor,      void,   (va_list * args_ptr, args_ptr)
+#define _String_dtor      dtor,      void
+#define _String_equals    equals,    bool,   (void * _obj, _obj)
+#define _String_hash_code hash_code, size_t
+#define _String_inspect   inspect,   char *
 def_public_methods()
 
 #endif

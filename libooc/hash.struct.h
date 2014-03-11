@@ -2,6 +2,7 @@
 #define HASH_STRUCT_H
 
 #include <libooc/class.struct.h>
+#include <libooc/hash.h>
 
 struct HashEntry {
     size_t used;
@@ -15,5 +16,7 @@ struct Hash {
     size_t filled;
     struct HashEntry * entries;
 };
+
+def_class_struct()
 
 #endif

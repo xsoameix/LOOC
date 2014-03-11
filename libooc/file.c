@@ -5,7 +5,6 @@
 #include <libooc/string.conflict.h>
 
 #include "file.struct.h"
-#include "file.h"
 
 def_class(Object)
 
@@ -15,7 +14,7 @@ def(ctor, override) {
 
 def(dtor, override) {
     void * content = self->content;
-    free(Object_inspect(content));
+    free(inspect(content));
     delete(content);
     free(self);
 }
