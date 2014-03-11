@@ -4,9 +4,9 @@
 #include <libooc/class.h>
 
 #undef CLASS
-#undef CLASS_MACRO_NAME
+#undef PUBLIC_METHODS_PREFIX
 #define CLASS Array
-#define CLASS_MACRO_NAME ARRAY
+#define PUBLIC_METHODS_PREFIX ARRAY
 #define ARRAY_OVERRIDE_METHODS \
     (ARRAY_ctor), \
     (ARRAY_dtor)

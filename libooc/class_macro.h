@@ -105,10 +105,10 @@
 //     #include <libooc/class.h>
 //
 //     #undef CLASS
-//     #undef CLASS_UNDERSCORE()
-//     #define CLASS Foo
-//     #define CLASS_MACRO_NAME FOO
-//     #define FOO_OVERRIDE_METHODS \
+//     #undef PUBLIC_METHODS_PREFIX
+//     #define CLASS Array
+//     #define PUBLIC_METHODS_PREFIX ARRAY
+//     #define ARRAY_OVERRIDE_METHODS \
 //         (FOO_ctor)
 //     #define FOO_METHODS \
 //         (FOO_len)
@@ -193,7 +193,7 @@
 #define CLASS_UNDERSCORE() CLASS_UNDERSCORE_(CLASS)
 #define CLASS_MACRO__(class, name) class ## _ ## name
 #define CLASS_MACRO_(class, name) CLASS_MACRO__(class, name)
-#define CLASS_MACRO(name) CLASS_MACRO_(CLASS_MACRO_NAME, name)
+#define CLASS_MACRO(name) CLASS_MACRO_(PUBLIC_METHODS_PREFIX, name)
 #define CLASS_INIT__(class, class_underscore, void, name, ret, ...) , class ## _ ## name, class_underscore ## _ ## name
 #define CLASS_INIT_(...) CLASS_INIT__(__VA_ARGS__)
 #define CLASS_INIT(...) CLASS_INIT_(CLASS, CLASS_UNDERSCORE(), __VA_ARGS__)
@@ -257,6 +257,9 @@
         } \
     }
 #define CLASS_DEFINE_(...) CLASS_DEFINE__(__VA_ARGS__)
-#define def_class(...) CLASS_DEFINE_(CLASS, __VA_ARGS__, (CLASS_MACRO(OVERRIDE_METHODS)), (CLASS_MACRO(METHODS)))
+#define def_class_(...) CLASS_DEFINE_(CLASS, __VA_ARGS__, (CLASS_MACRO(OVERRIDE_METHODS)), (CLASS_MACRO(METHODS)))
+#define def_class_0(super, ...) def_class_(super, CLASS_SIZE_FIXED)
+#define def_class_1(super, ...) def_class_(super, __VA_ARGS__)
+#define def_class(super, ...) def_SELECT(def_class_, ARG_SIZE(__VA_ARGS__))(super, __VA_ARGS__)
 
 #endif

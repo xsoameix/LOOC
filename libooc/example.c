@@ -20,15 +20,15 @@ int main(void) {
     value_get_str(&a);
 
     // string
-    string_init();
+    String_init();
     void * b = new(String, "b");
 
     // hash
-    hash_init();
+    Hash_init();
     void * hash = new(Hash);
-    hash_set(hash, &a, b);
-    void * c = hash_get(hash, &a);
-    string_puts(c);
+    Hash_set(hash, &a, b);
+    void * c = Hash_get(hash, &a);
+    String_puts(c);
     delete(hash);
 
     // array
@@ -37,15 +37,15 @@ int main(void) {
     Array_push(ary, &a);
     Array_unshift(ary, b);
     void * d = Array_shift(ary);
-    string_puts(d);
+    String_puts(d);
     delete(ary);
 
     delete(b);
 
     // file
-    file_init();
+    File_init();
     void * file = new(File, "libooc/example");
-    void * content = file_read(file);
-    string_puts(content);
+    void * content = File_read(file);
+    String_puts(content);
     delete(file);
 }

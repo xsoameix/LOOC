@@ -15,7 +15,7 @@ static size_t StaticString_hash_code(void * self);
 void
 value_init(void) {
     if(!StaticString) {
-        string_init();
+        String_init();
         StaticString = new(
                 Class,
                 Object,

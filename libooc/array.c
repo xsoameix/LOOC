@@ -8,7 +8,7 @@
 
 static void double_capa(struct Array * self, size_t offset);
 
-def_class(Object, CLASS_SIZE_FIXED)
+def_class(Object)
 
 def(ctor, override) {
     self->len = 0;

@@ -5,7 +5,7 @@
 
 struct String {
     const struct Class * class;
-    char * self;
+    char * chars;
 };
 
 #endif

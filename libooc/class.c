@@ -165,9 +165,3 @@ size_of(const void * obj) {
     const struct Object * object = obj;
     return object->class->size;
 }
-
-const void *
-super_of(const void * obj) {
-    const struct Object * object = obj;
-    return object->class->super;
-}
