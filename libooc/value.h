@@ -18,9 +18,9 @@ typedef struct {
 
 extern const void * StaticString;
 
-void   value_init(void);
-void   value_type(Value * value, const void * class);
-void   value_set_str(Value * value, char * str);
-char * value_get_str(Value * value);
+void   Value_init(void);
+void   Value_type(Value * value, const void * class);
+void   Value_set_str(Value * value, char * str);
+char * Value_get_str(Value * value);
 
 #endif

@@ -7,17 +7,17 @@
 #include "file.h"
 
 static void
-array_print(void * value, size_t index) {
-    printf("%zd: %s\n", index, value_get_str(value));
+Array_print(void * value, size_t index) {
+    printf("%zd: %s\n", index, Value_get_str(value));
 }
 
 int main(void) {
     // static string
-    value_init();
+    Value_init();
     Value a;
-    value_type(&a, StaticString);
-    value_set_str(&a, "a");
-    value_get_str(&a);
+    Value_type(&a, StaticString);
+    Value_set_str(&a, "a");
+    Value_get_str(&a);
 
     // string
     String_init();

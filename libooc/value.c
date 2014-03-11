@@ -13,7 +13,7 @@ static bool   StaticString_equals(void * _self, void * _obj);
 static size_t StaticString_hash_code(void * self);
 
 void
-value_init(void) {
+Value_init(void) {
     if(!StaticString) {
         String_init();
         StaticString = new(
@@ -30,17 +30,17 @@ value_init(void) {
 }
 
 void
-value_type(Value * value, const void * class) {
+Value_type(Value * value, const void * class) {
     value->class = class;
 }
 
 void
-value_set_str(Value * value, char * str) {
+Value_set_str(Value * value, char * str) {
     value->v_pointer = str;
 }
 
 char *
-value_get_str(Value * value) {
+Value_get_str(Value * value) {
     return (char *) value->v_pointer;
 }
 
@@ -53,13 +53,13 @@ StaticString_equals(void * _self, void * _obj) {
     Value * self = _self;
     Value * obj = _obj;
     return (obj->class == StaticString &&
-            strcmp(value_get_str(self), value_get_str(obj)) == 0);
+            strcmp(Value_get_str(self), Value_get_str(obj)) == 0);
 }
 
 static size_t
 StaticString_hash_code(void * self) {
     Value * value = self;
-    char * string = value_get_str(value);
+    char * string = Value_get_str(value);
     size_t len = strlen(string);
     size_t hval = len;
     for(size_t i = 0; i < len; i++) {
