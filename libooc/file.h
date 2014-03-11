@@ -7,11 +7,12 @@
 #undef PUBLIC_METHODS_PREFIX
 #define CLASS File
 #define PUBLIC_METHODS_PREFIX FILE
-#define FILE_OVERRIDE_METHODS \
+#define FILE_PUBLIC_OVERRIDE_METHODS \
     (FILE_ctor), \
     (FILE_dtor)
-#define FILE_METHODS \
+#define FILE_PUBLIC_METHODS \
     (FILE_read)
+#define FILE_PRIVATE_METHODS
 #define FILE_ctor    ctor, void,   (va_list * args_ptr, args_ptr)
 #define FILE_dtor    dtor, void
 #define FILE_read    read, void *

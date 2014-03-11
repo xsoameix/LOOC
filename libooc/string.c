@@ -16,6 +16,7 @@ def(dtor, override) {
 }
 
 def(equals, override) {
+    struct String * obj = _obj;
     return (obj->class == String &&
             strcmp(self->chars, obj->chars) == 0);
 }

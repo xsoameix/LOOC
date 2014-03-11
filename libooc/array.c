@@ -6,8 +6,6 @@
 
 #define DEFAULT_SIZE 2
 
-static void double_capa(struct Array * self, size_t offset);
-
 def_class(Object)
 
 def(ctor, override) {
@@ -36,7 +34,7 @@ def(last) {
 
 def(push) {
     if(self->len == self->capa) {
-        double_capa(self, 0);
+        Array_double_capa(self, 0);
     }
     self->values[self->len++] = data;
 }
@@ -48,7 +46,7 @@ def(pop) {
 
 def(unshift) {
     if(self->len == self->capa) {
-        double_capa(self, 1);
+        Array_double_capa(self, 1);
     }
     self->values[0] = data;
 }
@@ -68,8 +66,7 @@ def(each) {
     }
 }
 
-static void
-double_capa(struct Array * self, size_t offset) {
+def(double_capa, private) {
     size_t len = self->len * 2;
     void ** values = malloc(len * sizeof(void *));
     memcpy(&values[offset], self->values, self->len * sizeof(void *));
