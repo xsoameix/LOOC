@@ -4,159 +4,73 @@
 #include "array.struct.h"
 #include "array.h"
 
-struct ArrayClass {
-    const struct Class class;
-    void * (* array_get)(void * self, size_t index);
-    void   (* array_push)(void * self, void * data);
-    void   (* array_each)(void * self, void (* iter)(void * obj, size_t index));
-};
+#define DEFAULT_SIZE 2
 
-static const void * ArrayClass;
-       const void * Array;
-static const void * ArrayValues;
+def_class(Object)
 
-static void * ArrayClass_ctor(void * self, va_list * args_ptr);
-static void * Array_ctor(void * self, va_list * args_ptr);
-static void   Array_dtor(void * self);
-static void * Array_get(void * self, size_t index);
-static void   Array_push(void * self, void * data);
-static void   Array_each(void * self, void (* iter)(void * obj, size_t index));
-static void * ArrayValues_ctor(void * _self, va_list * args_ptr);
-static void   ArrayValues_dtor(void * self);
+def(ctor, override) {
+    self->len = 0;
+    self->capa = DEFAULT_SIZE;
+    self->values = malloc(DEFAULT_SIZE * sizeof(void *));
+}
 
-void
-array_init(void) {
-    if(!ArrayClass) {
-        ArrayClass = new(
-                Class,
-                Class,
-                "ArrayClass",
-                sizeof(struct ArrayClass),
-                ctor,       ArrayClass_ctor);
+def(dtor, override) {
+    free(self->values);
+    free(self);
+}
+
+def(len) {
+    return self->len;
+}
+
+def(get) {
+    return self->len > index ? self->values[index] : NULL;
+}
+
+def(last) {
+    size_t len = self->len;
+    return len > 0 ? self->values[len - 1] : NULL;
+}
+
+def(push) {
+    if(self->len == self->capa) {
+        Array_double_capa(self, 0);
     }
-    if(!Array) {
-        Array = new(
-                ArrayClass,
-                Object,
-                "Array",
-                sizeof(struct Array),
-                ctor,       Array_ctor,
-                dtor,       Array_dtor,
-                array_push, Array_push,
-                array_each, Array_each);
+    self->values[self->len++] = data;
+}
+
+def(pop) {
+    if(self->len == 0) return NULL;
+    return self->values[--self->len];
+}
+
+def(unshift) {
+    if(self->len == self->capa) {
+        Array_double_capa(self, 1);
     }
-    if(!ArrayValues) {
-        ArrayValues = new(
-                Class,
-                Object,
-                "ArrayValues",
-                sizeof(struct ArrayValues),
-                ctor,       ArrayValues_ctor,
-                dtor,       ArrayValues_dtor);
-    }
+    self->values[0] = data;
 }
 
-static void *
-ArrayClass_ctor(void * self, va_list * args_ptr) {
-    struct ArrayClass * class = self;
-
-    // inherit
-    const struct Class * superclass = super_of(class);
-    superclass->ctor(class, args_ptr);
-
-    // override
-    va_list args;
-    va_copy(args, * args_ptr);
-    typedef void (* func)();
-    func select;
-    while(select = va_arg(args, func)) {
-        func method = va_arg(args, func);
-        if(select == (func) array_push) {
-            *(func *) &class->array_push = method;
-        } else if(select == (func) array_each) {
-            *(func *) &class->array_each = method;
-        }
-    }
-    return class;
+def(shift) {
+    if(self->len == 0) return NULL;
+    void ** values = self->values;
+    void * element = values[0];
+    memmove(values, &values[1], --self->len * sizeof(void *));
+    return element;
 }
 
-static void *
-Array_ctor(void * self, va_list * args_ptr) {
-    struct Array * ary = self;
-    ary->len = 0;
-    ary->capa = 3;
-    ary->values = new(ArrayValues, ary->capa);
-    return ary;
-}
-
-static void
-Array_dtor(void * self) {
-    struct Array * ary = self;
-    delete(ary->values);
-    free(ary);
-}
-
-void *
-array_get(void * self, size_t index) {
-    struct Array * ary = self;
-    const struct ArrayClass * class = (struct ArrayClass *) ary->class;
-    return class->array_get(ary, index);
-}
-
-static void *
-Array_get(void * self, size_t index) {
-    struct Array * ary = self;
-    return ary->len > index ? ary->values->values[index] : NULL;
-}
-
-void
-array_push(void * self, void * data) {
-    struct Array * ary = self;
-    const struct ArrayClass * class = (struct ArrayClass *) ary->class;
-    return class->array_push(ary, data);
-}
-
-static void
-Array_push(void * self, void * data) {
-    struct Array * ary = self;
-    if(ary->len == ary->capa) {
-        size_t len = ary->len * 2;
-        struct ArrayValues * values = new(ArrayValues, len);
-        memcpy(values->values, ary->values, ary->len * sizeof(void *));
-        delete(ary->values);
-        ary->values = values;
-        ary->len = len;
-    }
-    ary->values->values[ary->len++] = data;
-}
-
-void
-array_each(void * self, void (* iter)(void * obj, size_t index)) {
-    struct Array * ary = self;
-    const struct ArrayClass * class = (struct ArrayClass *) ary->class;
-    return class->array_each(ary, iter);
-}
-
-static void
-Array_each(void * self, void (* iter)(void * obj, size_t index)) {
-    struct Array * ary = self;
-    void ** values = ary->values->values;
-    for(size_t i = 0; i < ary->len; i++) {
+def(each) {
+    void ** values = self->values;
+    for(size_t i = 0, len = self->len; i < len; i++) {
         iter(values[i], i);
     }
 }
 
-static void *
-ArrayValues_ctor(void * _self, va_list * args_ptr) {
-    struct ArrayValues * self = _self;
-    size_t len = va_arg(* args_ptr, size_t);
-    self->values = malloc(len * sizeof(void *));
-    return self;
-}
-
-static void
-ArrayValues_dtor(void * self) {
-    struct ArrayValues * values = self;
-    free(values->values);
-    free(values);
+def(double_capa, private) {
+    size_t len = self->len * 2;
+    void ** values = malloc(len * sizeof(void *));
+    memcpy(&values[offset], self->values, self->len * sizeof(void *));
+    free(self->values);
+    self->values = values;
+    self->len = len;
 }

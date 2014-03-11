@@ -4,10 +4,12 @@ libooc_0_0_1_a_SOURCES = \
     hash.c               \
     string.c             \
     array.c              \
-    value.c
+    value.c              \
+    file.c
 
 liboocincludedir=$(includedir)/libooc-0.0.1/libooc
 liboocinclude_HEADERS = \
+    class_macro.h       \
     class.struct.h      \
     class.h             \
     hash.struct.h       \
@@ -16,7 +18,8 @@ liboocinclude_HEADERS = \
     string.conflict.h   \
     array.struct.h      \
     array.h             \
-    value.h
+    value.h             \
+    file.h
 
 # libooc
 bin_PROGRAMS = bin/example

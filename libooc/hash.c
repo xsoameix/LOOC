@@ -3,159 +3,48 @@
 
 #include "hash.struct.h"
 #include "hash.h"
-#include "string.struct.h"
-#include "string.conflict.h"
 
-struct HashClass {
-    const struct Class class;
-    bool   (* hash_set)(void * self, void * key, void * data);
-    void * (* hash_get)(void * self, void * key);
-};
+#define DEFAULT_SIZE 5
 
 enum ACTION {
     Set,
     Get
 };
 
-static const void * HashClass;
-       const void * Hash;
-static const void * HashEntries;
+def_class(Object)
 
-static void * HashClass_ctor(void * self, va_list * args_ptr);
-static void * Hash_ctor(void * self, va_list * args_ptr);
-static void   Hash_dtor(void * self);
-static bool   Hash_set(void * self, void * key, void * data);
-static void * Hash_get(void * self, void * key);
-static void * HashEntries_ctor(void * self, va_list * args_ptr);
-static void   HashEntries_dtor(void * self);
-
-static bool isprime(size_t n);
-static bool search(struct Hash * hash, void * key, void * data, void ** retdata, enum ACTION action);
-static void rehash(struct Hash * hash);
-
-void
-hash_init(void) {
-    if(!HashClass) {
-        HashClass = new(
-                Class,
-                Class,
-                "HashClass",
-                sizeof(struct HashClass),
-                ctor,     HashClass_ctor);
-    }
-    if(!Hash) {
-        Hash = new(
-                HashClass,
-                Object,
-                "Hash",
-                sizeof(struct Hash),
-                ctor,     Hash_ctor,
-                dtor,     Hash_dtor,
-                hash_set, Hash_set,
-                hash_get, Hash_get);
-    }
-    if(!HashEntries) {
-        HashEntries = new(
-                Class,
-                Object,
-                "HashEntries",
-                sizeof(struct HashEntries),
-                ctor,     HashEntries_ctor,
-                dtor,     HashEntries_dtor);
-    }
+def(ctor, override) {
+    self->size = DEFAULT_SIZE;
+    self->filled = 0;
+    self->entries = malloc(DEFAULT_SIZE * (sizeof(struct Hash)));
 }
 
-static void *
-HashClass_ctor(void * self, va_list * args_ptr) {
-    struct HashClass * class = self;
-
-    // inherit
-    const struct Class * superclass = super_of(class);
-    superclass->ctor(class, args_ptr);
-
-    // override
-    va_list args;
-    va_copy(args, * args_ptr);
-    typedef void (* func)(); func select;
-    while(select = va_arg(args, func)) {
-        func method = va_arg(args, func);
-        if(select == (func) hash_set) {
-            *(func *) &class->hash_set = method;
-        } else if(select == (func) hash_get) {
-            *(func *) &class->hash_get = method;
-        }
-    }
-    return class;
+def(dtor, override) {
+    free(self->entries);
+    free(self);
 }
 
-static void *
-Hash_ctor(void * self, va_list * args_ptr) {
-    struct Hash * hash = self;
-    size_t size = 5;
-    size |= 1; // Because most prime is odd, so make it odd.
-    if(!isprime(size)) {
-        size += 2;
-    }
-    hash->size = size;
-    hash->filled = 0;
-    hash->entries = new(HashEntries, size);
-    return hash;
+def(set) {
+    return Hash_search(self, key, data, NULL, Set);
 }
 
-static void
-Hash_dtor(void * self) {
-    struct Hash * hash = self;
-    delete(hash->entries);
-    free(hash);
-}
-
-bool
-hash_set(void * self, void * key, void * data) {
-    struct Hash * hash = self;
-    const struct HashClass * class = (struct HashClass *) hash->class;
-    return class->hash_set(hash, key, data);
-}
-
-static bool
-Hash_set(void * self, void * key, void * data) {
-    struct Hash * hash = self;
-    return search(hash, key, data, NULL, Set);
-}
-
-void *
-hash_get(void * self, void * key) {
-    struct Hash * hash = self;
-    const struct HashClass * class = (struct HashClass *) hash->class;
-    return class->hash_get(hash, key);
-}
-
-static void *
-Hash_get(void * self, void * key) {
-    struct Hash * hash = self;
+def(get) {
     void * result;
-    if(search(hash, key, NULL, &result, Get)) {
+    if(Hash_search(self, key, NULL, &result, Get)) {
         return result;
     }
     return NULL;
 }
 
-static void *
-HashEntries_ctor(void * self, va_list * args_ptr) {
-    struct HashEntries * entries = self;
-    size_t size = va_arg(* args_ptr, size_t);
-    entries->entries = malloc(size * sizeof(struct HashEntry));
-    return entries;
+def(each) {
+    struct HashEntry * entries = self->entries;
+    for(size_t i = 0, size = self->size; i < size; i++) {
+        struct HashEntry entry = entries[i];
+        if(entry.used) iter(entry.key, entry.data);
+    }
 }
 
-static void
-HashEntries_dtor(void * self) {
-    struct HashEntries * entries = self;
-    free(entries->entries);
-    free(entries);
-}
-
-static bool
-isprime(size_t n) {
+def(prime_p, private) {
     size_t div = 3;
     while(div * div < n && n % div != 0) {
         div += 2;
@@ -163,55 +52,54 @@ isprime(size_t n) {
     return n % div != 0;
 }
 
-static bool
-search(struct Hash * hash, void * _key, void * data, void ** retdata, enum ACTION action) {
+def(search, private) {
     struct Object * key = _key;
-    size_t hval = hash_code(key);
-    size_t idx = hval % hash->size; // First hash function.
+    size_t hval = Object_hash_code(key);
+    size_t i = hval % self->size; // First hash function.
 
     // There are 3 possibilities:
     // 1. The slot is used, same key.
     // 2. The slot is used, different key.
     // 3. The slot is not used.
-    struct HashEntry * entries = hash->entries->entries;
+    struct HashEntry * entries = self->entries;
 
     // Possibility 1.
-    if(entries[idx].used == hval &&
-            equals(key, entries[idx].key)) {
+    if(entries[i].used == hval &&
+            Object_equals(key, entries[i].key)) {
         // Possibility 2.
-    } else if(entries[idx].used) {
+    } else if(entries[i].used) {
         // The second hash function can't be 0.
-        size_t hval2 = 1 + hval % (hash->size - 1),
-               first_idx = idx;
+        size_t hval2 = 1 + hval % (self->size - 1);
+        size_t first = i;
         do {
-            idx = (idx + hval2) % hash->size;
-            if(idx == first_idx) {
+            i = (i + hval2) % self->size;
+            if(i == first) {
                 // If all of slots are Possibility 2. The end is here.
                 return false;
             }
 
             // Possibility 1.
-            if(entries[idx].used == hval &&
-                    equals(key, entries[idx].key)) {
+            if(entries[i].used == hval &&
+                    Object_equals(key, entries[i].key)) {
                 break;
             }
             // Possibility 2.
-        } while(entries[idx].used);
+        } while(entries[i].used);
     }
     // Possibility 1, 3.
-    struct HashEntry * select = &entries[idx];
+    struct HashEntry * select = &entries[i];
     switch(action) {
     case Set:
         // Possibility 3.
         if(!select->used) {
-            hash->filled++;
+            self->filled++;
         }
         select->used = hval;
         select->key  = key;
         select->data = data;
         float ratio = 0.8;
-        if(((float) hash->filled) / hash->size > ratio) {
-            rehash(hash);
+        if(((float) self->filled) / self->size > ratio) {
+            Hash_rehash(self);
         }
         break;
     case Get:
@@ -220,31 +108,26 @@ search(struct Hash * hash, void * _key, void * data, void ** retdata, enum ACTIO
             return false;
         }
         // Possibility 1.
-        *retdata = select->data;
+        * ret = select->data;
         break;
     }
     return true;
 }
 
-static void
-rehash(struct Hash * hash) {
-    size_t old_size = hash->size;
+def(rehash, private) {
     // Make the new size is double and odd.
-    size_t new_size = old_size * 2 + 1;
-    while(!isprime(new_size)) {
-        new_size += 2;
-    }
-    hash->size = new_size;
-    hash->filled = 0;
+    size_t old_size = self->size;
+    size_t size = old_size * 2 + 1;
+    while(!Hash_prime_p(self, size)) size += 2;
+    self->size = size;
+    self->filled = 0;
 
     // Create the new entry array.
-    struct HashEntries * old_entries = hash->entries;
-    struct HashEntry * entries = old_entries->entries;
-    hash->entries = new(HashEntries, new_size);
+    struct HashEntry * entries = self->entries;
+    self->entries = malloc(size * (sizeof(struct Hash)));
     for(size_t i = 0; i < old_size; i++) {
-        if(entries[i].used) {
-            hash_set(hash, entries[i].key, entries[i].data);
-        }
+        struct HashEntry entry = entries[i];
+        if(entry.used) Hash_set(self, entry.key, entry.data);
     }
-    delete(old_entries);
+    free(entries);
 }

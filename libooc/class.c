@@ -5,12 +5,14 @@
 #include "class.struct.h"
 #include "class.h"
 
-static void * Class_ctor(void * self, va_list * args_ptr);
-static void   Class_dtor(void * self);
-static void * Object_ctor(void * self, va_list * args_ptr);
-static void   Object_dtor(void * self);
-static bool   Object_equals(void * self, void * obj);
-static size_t Object_hash_code(void * self);
+static void   class_ctor(void * self, va_list * args_ptr);
+static void   class_dtor(void * self);
+static void   object_ctor(void * self, va_list * args_ptr);
+static void   object_dtor(void * self);
+static bool   object_equals(void * self, void * obj);
+static size_t object_hash_code(void * self);
+static char * object_inspect(void * self);
+static size_t size_of(const void * obj);
 
 static struct Class classes[2] = {
     {
@@ -18,19 +20,23 @@ static struct Class classes[2] = {
         classes + 1,
         "Class",
         sizeof(struct Class),
-        Class_ctor,
-        Class_dtor,
-        Object_equals,
-        Object_hash_code
+        false,
+        class_ctor,
+        class_dtor,
+        object_equals,
+        object_hash_code,
+        object_inspect
     }, {
         classes,
         0,
         "Object",
         sizeof(struct Object),
-        Object_ctor,
-        Object_dtor,
-        Object_equals,
-        Object_hash_code
+        false,
+        object_ctor,
+        object_dtor,
+        object_equals,
+        object_hash_code,
+        object_inspect
     }
 };
 
@@ -42,9 +48,15 @@ new(const void * klass, ...) {
     const struct Class * class = klass;
     va_list args;
     va_start(args, klass);
-    struct Class * obj = malloc(class->size);
-    obj->class = class;
-    ctor(obj, &args);
+    struct Class * obj;
+    if(class->is_variable_size) {
+        class->ctor(&obj, &args);
+        obj->class = class;
+    } else {
+        obj = malloc(class->size);
+        obj->class = class;
+        class->ctor(obj, &args);
+    }
     va_end(args);
     return obj;
 }
@@ -52,57 +64,26 @@ new(const void * klass, ...) {
 void
 delete(void * obj) {
     const struct Object * object = obj;
-    dtor(obj);
-}
-
-void *
-ctor(void * self, va_list * args) {
-    struct Class * class = self;
-    return class->class->ctor(class, args);
+    object->class->dtor(obj);
 }
 
 void
-dtor(void * self) {
+Object_ctor(void * self, va_list * args_ptr) {
     struct Class * class = self;
-    return class->class->dtor(class);
+    class->class->ctor(class, args_ptr);
 }
 
-bool
-equals(void * self, void * obj) {
-    struct Object * object = self;
-    return object->class->equals(object, obj);
+static void
+object_ctor(void * self, va_list * args_ptr) {
 }
 
-size_t
-hash_code(void * self) {
-    struct Object * object = self;
-    return object->class->hash_code(object);
-}
-
-size_t
-size_of(const void * obj) {
-    const struct Object * object = obj;
-    return object->class->size;
-}
-
-const void *
-super_of(const void * obj) {
-    const struct Object * object = obj;
-    return object->class->super;
-}
-
-char *
-class_name_of(const void * obj) {
-    const struct Object * object = obj;
-    return object->class->name;
-}
-
-static void *
-Class_ctor(void * self, va_list * args_ptr) {
+static void
+class_ctor(void * self, va_list * args_ptr) {
     struct Class * class = self;
     class->super = va_arg(* args_ptr, struct Class *);
     class->name = va_arg(* args_ptr, char *);
     class->size = va_arg(* args_ptr, size_t);
+    class->is_variable_size = va_arg(* args_ptr, size_t);
     size_t offset = offsetof(struct Class, ctor);
 
     // inherit
@@ -117,39 +98,70 @@ Class_ctor(void * self, va_list * args_ptr) {
     func select, method;
     while(select = va_arg(args, func)) {
         method = va_arg(args, func);
-        if(select == (func) ctor) {
+        if(select == (func) Object_ctor) {
             *(func *) &class->ctor = method;
-        } else if(select == (func) dtor) {
+        } else if(select == (func) Object_dtor) {
             *(func *) &class->dtor = method;
-        } else if(select == (func) equals) {
+        } else if(select == (func) Object_equals) {
             *(func *) &class->equals = method;
-        } else if(select == (func) hash_code) {
+        } else if(select == (func) Object_hash_code) {
             *(func *) &class->hash_code = method;
+        } else if(select == (func) Object_inspect) {
+            *(func *) &class->inspect = method;
         }
     }
-    return class;
 }
 
-static void
-Class_dtor(void * self) {
-}
-
-static void *
-Object_ctor(void * self, va_list * args_ptr) {
-    return self;
-}
-
-static void
+void
 Object_dtor(void * self) {
+    // Please use delete() instead.
+}
+
+static void
+object_dtor(void * self) {
     free(self);
 }
 
-static bool
+static void
+class_dtor(void * self) {
+}
+
+bool
 Object_equals(void * self, void * obj) {
+    struct Class * class = self;
+    return class->class->equals(class, obj);
+}
+
+static bool
+object_equals(void * self, void * obj) {
     return self == obj;
 }
 
-static size_t
+size_t
 Object_hash_code(void * self) {
+    struct Class * class = self;
+    return class->class->hash_code(class);
+}
+
+static size_t
+object_hash_code(void * self) {
     return (size_t) self;
+}
+
+char *
+Object_inspect(void * self) {
+    struct Class * class = self;
+    return class->class->inspect(class);
+}
+
+static char *
+object_inspect(void * self) {
+    struct Object * object = self;
+    return object->class->name;
+}
+
+static size_t
+size_of(const void * obj) {
+    const struct Object * object = obj;
+    return object->class->size;
 }

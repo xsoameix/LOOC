@@ -5,9 +5,7 @@
 
 struct String {
     const struct Class * class;
-    char * self;
+    char * chars;
 };
-
-extern const void * StringClass;
 
 #endif

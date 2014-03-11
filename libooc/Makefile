@@ -98,7 +98,8 @@ ARFLAGS = cru
 libooc_0_0_1_a_AR = $(AR) $(ARFLAGS)
 libooc_0_0_1_a_LIBADD =
 am_libooc_0_0_1_a_OBJECTS = class.$(OBJEXT) hash.$(OBJEXT) \
-	string.$(OBJEXT) array.$(OBJEXT) value.$(OBJEXT)
+	string.$(OBJEXT) array.$(OBJEXT) value.$(OBJEXT) \
+	file.$(OBJEXT)
 libooc_0_0_1_a_OBJECTS = $(am_libooc_0_0_1_a_OBJECTS)
 PROGRAMS = $(bin_PROGRAMS)
 am_bin_example_OBJECTS = example.$(OBJEXT)
@@ -217,10 +218,12 @@ libooc_0_0_1_a_SOURCES = \
     hash.c               \
     string.c             \
     array.c              \
-    value.c
+    value.c              \
+    file.c
 
 liboocincludedir = $(includedir)/libooc-0.0.1/libooc
 liboocinclude_HEADERS = \
+    class_macro.h       \
     class.struct.h      \
     class.h             \
     hash.struct.h       \
@@ -229,7 +232,8 @@ liboocinclude_HEADERS = \
     string.conflict.h   \
     array.struct.h      \
     array.h             \
-    value.h
+    value.h             \
+    file.h
 
 bin_example_SOURCES = example.c \
 				 $(top_builddir)/libooc/array.h \
@@ -363,6 +367,7 @@ distclean-compile:
 include ./$(DEPDIR)/array.Po
 include ./$(DEPDIR)/class.Po
 include ./$(DEPDIR)/example.Po
+include ./$(DEPDIR)/file.Po
 include ./$(DEPDIR)/hash.Po
 include ./$(DEPDIR)/string.Po
 include ./$(DEPDIR)/value.Po
