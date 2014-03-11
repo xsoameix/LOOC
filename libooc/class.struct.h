@@ -4,10 +4,11 @@
 #include <stdarg.h>
 #include <stddef.h>
 #include <stdbool.h>
+#include <libooc/class_macro.h>
 
-struct Class {
-    const struct Class * class;
-    const struct Class * super;
+struct ObjectClass {
+    const struct ObjectClass * class;
+    const struct ObjectClass * super;
     char * name;
     size_t size;
     size_t is_variable_size;
@@ -19,7 +20,7 @@ struct Class {
 };
 
 struct Object {
-    const struct Class * class;
+    const struct ObjectClass * class;
 };
 
 #endif

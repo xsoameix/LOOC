@@ -14,12 +14,12 @@ static size_t object_hash_code(void * self);
 static char * object_inspect(void * self);
 static size_t size_of(const void * obj);
 
-static struct Class classes[2] = {
+static struct ObjectClass classes[2] = {
     {
         classes,
         classes + 1,
         "Class",
-        sizeof(struct Class),
+        sizeof(struct ObjectClass),
         false,
         class_ctor,
         class_dtor,
@@ -45,10 +45,10 @@ const void * Object = classes + 1;
 
 void *
 new(const void * klass, ...) {
-    const struct Class * class = klass;
+    const struct ObjectClass * class = klass;
     va_list args;
     va_start(args, klass);
-    struct Class * obj;
+    struct ObjectClass * obj;
     if(class->is_variable_size) {
         class->ctor(&obj, &args);
         obj->class = class;
@@ -69,7 +69,7 @@ delete(void * obj) {
 
 void
 Object_ctor(void * self, va_list * args_ptr) {
-    struct Class * class = self;
+    struct ObjectClass * class = self;
     class->class->ctor(class, args_ptr);
 }
 
@@ -79,12 +79,12 @@ object_ctor(void * self, va_list * args_ptr) {
 
 static void
 class_ctor(void * self, va_list * args_ptr) {
-    struct Class * class = self;
-    class->super = va_arg(* args_ptr, struct Class *);
+    struct ObjectClass * class = self;
+    class->super = va_arg(* args_ptr, struct ObjectClass *);
     class->name = va_arg(* args_ptr, char *);
     class->size = va_arg(* args_ptr, size_t);
     class->is_variable_size = va_arg(* args_ptr, size_t);
-    size_t offset = offsetof(struct Class, ctor);
+    size_t offset = offsetof(struct ObjectClass, ctor);
 
     // inherit
     memcpy((char *) class + offset,
@@ -128,7 +128,7 @@ class_dtor(void * self) {
 
 bool
 Object_equals(void * self, void * obj) {
-    struct Class * class = self;
+    struct ObjectClass * class = self;
     return class->class->equals(class, obj);
 }
 
@@ -139,7 +139,7 @@ object_equals(void * self, void * obj) {
 
 size_t
 Object_hash_code(void * self) {
-    struct Class * class = self;
+    struct ObjectClass * class = self;
     return class->class->hash_code(class);
 }
 
@@ -150,7 +150,7 @@ object_hash_code(void * self) {
 
 char *
 Object_inspect(void * self) {
-    struct Class * class = self;
+    struct ObjectClass * class = self;
     return class->class->inspect(class);
 }
 

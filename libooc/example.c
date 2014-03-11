@@ -28,7 +28,7 @@ int main(void) {
     void * hash = new(Hash);
     Hash_set(hash, &a, b);
     void * c = Hash_get(hash, &a);
-    String_puts(c);
+    puts(Object_inspect(c));
     delete(hash);
 
     // array
@@ -37,7 +37,7 @@ int main(void) {
     Array_push(ary, &a);
     Array_unshift(ary, b);
     void * d = Array_shift(ary);
-    String_puts(d);
+    puts(Object_inspect(d));
     delete(ary);
 
     delete(b);
@@ -46,6 +46,6 @@ int main(void) {
     File_init();
     void * file = new(File, "libooc/example");
     void * content = File_read(file);
-    String_puts(content);
+    puts(Object_inspect(content));
     delete(file);
 }

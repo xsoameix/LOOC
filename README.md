@@ -8,7 +8,6 @@ libooc is library with object oriented written in c.
 
         String_init();
         void * a = new(String, "a");
-        String_puts(a);
         delete(a);
 
 *   Static String
