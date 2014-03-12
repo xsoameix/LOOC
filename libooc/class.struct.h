@@ -23,4 +23,10 @@ struct Object {
     const struct ObjectClass * class;
 };
 
+static void   ctor(struct Object * self, va_list * args_ptr) __attribute__((weakref("Object_ctor")));
+static void   dtor(struct Object * self) __attribute__((weakref("Object_dtor")));
+static bool   equals(struct Object * self, void * obj) __attribute__((weakref("Object_equals")));
+static size_t hash_code(struct Object * self) __attribute__((weakref("Object_hash_code")));
+static char * inspect(struct Object * self) __attribute__((weakref("Object_inspect")));
+
 #endif
