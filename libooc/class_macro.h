@@ -170,7 +170,9 @@
     struct _class ## Class { \
         const struct ObjectClass class; \
         LOOP_MULTIPLE(METHOD_POINTER_DEFINE, void, CLASS_MACRO(PUBLIC_METHODS)) \
-    };
+    }; \
+    \
+    LOOP_MULTIPLE(METHOD_STATIC_ALIAS, _class, CLASS_MACRO(PUBLIC_METHODS))
 #define def_CLASS_STRUCT_(class) def_CLASS_STRUCT__(class)
 #define def_class_struct() def_CLASS_STRUCT_(CLASS)
 
@@ -254,8 +256,6 @@
     LOOP_SINGLE(METHOD_STATIC_DECLARE, void, override_methods) \
     LOOP_SINGLE(METHOD_STATIC_DECLARE, void, methods) \
     LOOP_SINGLE(METHOD_STATIC_DECLARE, void, private_methods) \
-    LOOP_SINGLE(METHOD_STATIC_ALIAS, _super, super_methods) \
-    LOOP_SINGLE(METHOD_STATIC_ALIAS, _class, methods) \
     LOOP_SINGLE(METHOD_PRIVATE_ALIAS, _class, private_methods) \
     \
     void \
