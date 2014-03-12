@@ -66,10 +66,10 @@ def(each) {
 }
 
 def(double_capa, private) {
-    size_t len = self->len * 2;
-    void ** values = malloc(len * sizeof(void *));
+    size_t capa = self->len * 2;
+    void ** values = malloc(capa * sizeof(void *));
     memcpy(&values[offset], self->values, self->len * sizeof(void *));
     free(self->values);
     self->values = values;
-    self->len = len;
+    self->capa = capa;
 }
