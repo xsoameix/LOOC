@@ -10,24 +10,26 @@ enum ACTION {
     Get
 };
 
-def_class(Object)
+def_class(Hash, Object)
 
-def(ctor, override) {
+override
+def(ctor, void : va_list * @args_ptr) {
     self->size = DEFAULT_SIZE;
     self->filled = 0;
     self->entries = malloc(DEFAULT_SIZE * (sizeof(struct Hash)));
 }
 
-def(dtor, override) {
+override
+def(dtor, void) {
     free(self->entries);
     free(self);
 }
 
-def(set) {
+def(set, bool : void * @key . void * @data) {
     return search(self, key, data, NULL, Set);
 }
 
-def(get) {
+def(get, void * : void * @key) {
     void * result;
     if(search(self, key, NULL, &result, Get)) {
         return result;
@@ -35,7 +37,7 @@ def(get) {
     return NULL;
 }
 
-def(each) {
+def(each, void : void (* @iter)(void * key, void * data)) {
     struct HashEntry * entries = self->entries;
     for(size_t i = 0, size = self->size; i < size; i++) {
         struct HashEntry entry = entries[i];
@@ -43,7 +45,8 @@ def(each) {
     }
 }
 
-def(prime_p, private) {
+private
+def(prime_p, bool : size_t @n) {
     size_t div = 3;
     while(div * div < n && n % div != 0) {
         div += 2;
@@ -51,7 +54,8 @@ def(prime_p, private) {
     return n % div != 0;
 }
 
-def(search, private) {
+private
+def(search, bool : void * @_key . void * @data . void ** @ret . enum ACTION @action) {
     struct Object * key = _key;
     size_t hval = hash_code(key);
     size_t i = hval % self->size; // First hash function.
@@ -113,7 +117,8 @@ def(search, private) {
     return true;
 }
 
-def(rehash, private) {
+private
+def(rehash, void) {
     // Make the new size is double and odd.
     size_t old_size = self->size;
     size_t size = old_size * 2 + 1;

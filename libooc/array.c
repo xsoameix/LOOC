@@ -5,52 +5,54 @@
 
 #define DEFAULT_SIZE 2
 
-def_class(Object)
+def_class(Array, Object)
 
-def(ctor, override) {
+override
+def(ctor, void : va_list * @args_ptr) {
     self->len = 0;
     self->capa = DEFAULT_SIZE;
     self->values = malloc(DEFAULT_SIZE * sizeof(void *));
 }
 
-def(dtor, override) {
+override
+def(dtor, void) {
     free(self->values);
     free(self);
 }
 
-def(len) {
+def(len, size_t) {
     return self->len;
 }
 
-def(get) {
+def(get, void * : size_t @index) {
     return self->len > index ? self->values[index] : NULL;
 }
 
-def(last) {
+def(last, void *) {
     size_t len = self->len;
     return len > 0 ? self->values[len - 1] : NULL;
 }
 
-def(push) {
+def(push, void : void * @data) {
     if(self->len == self->capa) {
         double_capa(self, 0);
     }
     self->values[self->len++] = data;
 }
 
-def(pop) {
+def(pop, void *) {
     if(self->len == 0) return NULL;
     return self->values[--self->len];
 }
 
-def(unshift) {
+def(unshift, void : void * @data) {
     if(self->len == self->capa) {
         double_capa(self, 1);
     }
     self->values[0] = data;
 }
 
-def(shift) {
+def(shift, void *) {
     if(self->len == 0) return NULL;
     void ** values = self->values;
     void * element = values[0];
@@ -58,14 +60,15 @@ def(shift) {
     return element;
 }
 
-def(each) {
+def(each, void : void (* @iter)(void * obj, size_t index)) {
     void ** values = self->values;
     for(size_t i = 0, len = self->len; i < len; i++) {
         iter(values[i], i);
     }
 }
 
-def(double_capa, private) {
+private
+def(double_capa, void : size_t @offset) {
     size_t capa = self->len * 2;
     void ** values = malloc(capa * sizeof(void *));
     memcpy(&values[offset], self->values, self->len * sizeof(void *));

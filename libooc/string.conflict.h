@@ -1,5 +1,5 @@
-#ifndef String_H
-#define String_H
+#ifndef STRING_H
+#define STRING_H
 
 #include <libooc/class.h>
 
