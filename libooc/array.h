@@ -1,7 +1,7 @@
 #ifndef ARRAY_H
 #define ARRAY_H
 
-#include <libooc/class.h>
+#include <libooc/object.h>
 
 
 #undef CLASS

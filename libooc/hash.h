@@ -1,7 +1,7 @@
 #ifndef HASH_H
 #define HASH_H
 
-#include <libooc/class.h>
+#include <libooc/object.h>
 
 
 #undef CLASS

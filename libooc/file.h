@@ -1,7 +1,7 @@
 #ifndef FILE_H
 #define FILE_H
 
-#include <libooc/class.h>
+#include <libooc/object.h>
 
 
 #undef CLASS

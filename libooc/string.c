@@ -19,7 +19,7 @@ def(dtor, void) {
 override
 def(equals, bool : void * @_obj) {
     struct String * obj = _obj;
-    return (obj->class == String &&
+    return (((struct Object *) obj)->class == String &&
             strcmp(self->chars, obj->chars) == 0);
 }
 

@@ -1,6 +1,6 @@
 lib_LIBRARIES = libooc-0.0.1.a
 libooc_0_0_1_a_SOURCES = \
-    class.c              \
+    object.c             \
     hash.c               \
     string.c             \
     array.c              \
@@ -9,9 +9,9 @@ libooc_0_0_1_a_SOURCES = \
 
 liboocincludedir=$(includedir)/libooc-0.0.1/libooc
 liboocinclude_HEADERS = \
-    class_macro.h       \
-    class.struct.h      \
-    class.h             \
+    macro.h             \
+    object.struct.h     \
+    object.h            \
     hash.struct.h       \
     hash.h              \
     string.struct.h     \

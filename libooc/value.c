@@ -1,7 +1,7 @@
 #include <string.h>
 
-#include "class.struct.h"
-#include "class.h"
+#include "object.struct.h"
+#include "object.h"
 #include "string.struct.h"
 #include "string.conflict.h"
 #include "value.h"
@@ -31,7 +31,7 @@ Value_init(void) {
 
 void
 Value_type(Value * value, const void * class) {
-    value->class = class;
+    ((struct Object *) value)->class = class;
 }
 
 void
@@ -52,7 +52,7 @@ static bool
 StaticString_equals(void * _self, void * _obj) {
     Value * self = _self;
     Value * obj = _obj;
-    return (obj->class == StaticString &&
+    return (((struct Object *) obj)->class == StaticString &&
             strcmp(Value_get_str(self), Value_get_str(obj)) == 0);
 }
 

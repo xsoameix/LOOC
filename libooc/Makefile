@@ -97,7 +97,7 @@ AR = ar
 ARFLAGS = cru
 libooc_0_0_1_a_AR = $(AR) $(ARFLAGS)
 libooc_0_0_1_a_LIBADD =
-am_libooc_0_0_1_a_OBJECTS = class.$(OBJEXT) hash.$(OBJEXT) \
+am_libooc_0_0_1_a_OBJECTS = object.$(OBJEXT) hash.$(OBJEXT) \
 	string.$(OBJEXT) array.$(OBJEXT) value.$(OBJEXT) \
 	file.$(OBJEXT)
 libooc_0_0_1_a_OBJECTS = $(am_libooc_0_0_1_a_OBJECTS)
@@ -214,7 +214,7 @@ top_builddir = ..
 top_srcdir = ..
 lib_LIBRARIES = libooc-0.0.1.a
 libooc_0_0_1_a_SOURCES = \
-    class.c              \
+    object.c             \
     hash.c               \
     string.c             \
     array.c              \
@@ -223,9 +223,9 @@ libooc_0_0_1_a_SOURCES = \
 
 liboocincludedir = $(includedir)/libooc-0.0.1/libooc
 liboocinclude_HEADERS = \
-    class_macro.h       \
-    class.struct.h      \
-    class.h             \
+    macro.h             \
+    object.struct.h     \
+    object.h            \
     hash.struct.h       \
     hash.h              \
     string.struct.h     \
@@ -365,10 +365,10 @@ distclean-compile:
 	-rm -f *.tab.c
 
 include ./$(DEPDIR)/array.Po
-include ./$(DEPDIR)/class.Po
 include ./$(DEPDIR)/example.Po
 include ./$(DEPDIR)/file.Po
 include ./$(DEPDIR)/hash.Po
+include ./$(DEPDIR)/object.Po
 include ./$(DEPDIR)/string.Po
 include ./$(DEPDIR)/value.Po
 

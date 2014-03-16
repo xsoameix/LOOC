@@ -1,5 +1,5 @@
-#ifndef CLASS_MACRO_H
-#define CLASS_MACRO_H
+#ifndef MACRO_H
+#define MACRO_H
 
 // ARGS macro usage:
 // 1.  ARG_SIZE()
@@ -193,7 +193,7 @@
 #define METHOD_PRIVATE_ALIAS(...) METHOD_PRIVATE_ALIAS_(CLASS, __VA_ARGS__);
 #define METHOD_CALL__(__class, func, ret, ...) \
     struct __class * _self = self; \
-    const struct __class ## Class * _class = (struct __class ## Class *) _self->class; \
+    const struct __class ## Class * _class = (struct __class ## Class *) ((struct Object *) _self)->class; \
     return _class->func(ARG_SELF_()LOOP_L2_MULTIPLE(ARG_L2_NAME, __VA_ARGS__));
 #define METHOD_CALL_(...) METHOD_CALL__(__VA_ARGS__)
 #define METHOD_CALL(...) METHOD_CALL_(__VA_ARGS__)
