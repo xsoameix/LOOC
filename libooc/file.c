@@ -6,20 +6,22 @@
 
 #include "file.struct.h"
 
-def_class(Object)
+def_class(File, Object)
 
-def(ctor, override) {
+override
+def(ctor, void : va_list * @args_ptr) {
     self->filename = va_arg(* args_ptr, char *);
 }
 
-def(dtor, override) {
+override
+def(dtor, void) {
     void * content = self->content;
     free(inspect(content));
     delete(content);
     free(self);
 }
 
-def(read) {
+def(read, void *) {
     FILE * file = fopen(self->filename, "rb");
     assert(file != NULL);
 

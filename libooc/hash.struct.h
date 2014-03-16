@@ -1,7 +1,7 @@
 #ifndef HASH_STRUCT_H
 #define HASH_STRUCT_H
 
-#include <libooc/class.struct.h>
+#include <libooc/object.struct.h>
 #include <libooc/hash.h>
 
 struct HashEntry {
@@ -11,7 +11,7 @@ struct HashEntry {
 };
 
 struct Hash {
-    const struct Class * class;
+    struct Object super;
     size_t size;
     size_t filled;
     struct HashEntry * entries;

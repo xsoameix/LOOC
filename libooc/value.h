@@ -1,8 +1,10 @@
 #ifndef VALUE_H
 #define VALUE_H
 
+#include <libooc/object.struct.h>
+
 typedef struct {
-    const void * class;
+    struct Object super;
     union {
         int                v_int;
         unsigned int       v_uint;

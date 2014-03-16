@@ -4,23 +4,27 @@
 
 #include "string.struct.h"
 
-def_class(Object)
+def_class(String, Object)
 
-def(ctor, override) {
+override
+def(ctor, void : va_list * @args_ptr) {
     self->chars = va_arg(* args_ptr, char *);
 }
 
-def(dtor, override) {
+override
+def(dtor, void) {
     free(self);
 }
 
-def(equals, override) {
+override
+def(equals, bool : void * @_obj) {
     struct String * obj = _obj;
-    return (obj->class == String &&
+    return (((struct Object *) obj)->class == String &&
             strcmp(self->chars, obj->chars) == 0);
 }
 
-def(hash_code, override) {
+override
+def(hash_code, size_t) {
     size_t len = strlen(self->chars);
     size_t hval = len;
     for(size_t i = 0; i < len; i++) {
@@ -30,6 +34,7 @@ def(hash_code, override) {
     return hval;
 }
 
-def(inspect, override) {
+override
+def(inspect, char *) {
     return self->chars;
 }

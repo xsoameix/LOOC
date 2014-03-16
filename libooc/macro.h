@@ -1,5 +1,5 @@
-#ifndef CLASS_MACRO_H
-#define CLASS_MACRO_H
+#ifndef MACRO_H
+#define MACRO_H
 
 // ARGS macro usage:
 // 1.  ARG_SIZE()
@@ -193,18 +193,15 @@
 #define METHOD_PRIVATE_ALIAS(...) METHOD_PRIVATE_ALIAS_(CLASS, __VA_ARGS__);
 #define METHOD_CALL__(__class, func, ret, ...) \
     struct __class * _self = self; \
-    const struct __class ## Class * _class = (struct __class ## Class *) _self->class; \
+    const struct __class ## Class * _class = (struct __class ## Class *) ((struct Object *) _self)->class; \
     return _class->func(ARG_SELF_()LOOP_L2_MULTIPLE(ARG_L2_NAME, __VA_ARGS__));
 #define METHOD_CALL_(...) METHOD_CALL__(__VA_ARGS__)
 #define METHOD_CALL(...) METHOD_CALL_(__VA_ARGS__)
 #define def_SELECT_(name, n) name ## n
 #define def_SELECT(name, n) def_SELECT_(name, n)
-#define def_(method, ...) \
-    METHOD_PUBLIC_DEFINE(void, CLASS_MACRO(method)) { METHOD_CALL(CLASS, CLASS_MACRO(method)) } \
-    METHOD_STATIC_DEFINE(void, CLASS_MACRO(method))
-#define def_private(method, ...) METHOD_STATIC_DEFINE(void, CLASS_MACRO(method))
-#define def_override(method, ...) def_private(method, __VA_ARGS__)
-#define def(method, ...) def_SELECT(def_, __VA_ARGS__)(method, __VA_ARGS__)
+#define def(method, ...) METHOD_STATIC_DEFINE(void, CLASS_MACRO(method))
+#define override
+#define private
 #define METHOD_POINTER_DEFINE__(class, void, name, ret, ...) ret (* name)(struct class * ARG_SELF()LOOP_L2_MULTIPLE(ARG_TYPE, __VA_ARGS__));
 #define METHOD_POINTER_DEFINE_(...) METHOD_POINTER_DEFINE__(__VA_ARGS__)
 #define METHOD_POINTER_DEFINE(...) METHOD_POINTER_DEFINE_(CLASS, __VA_ARGS__)
@@ -234,8 +231,6 @@
     static const void * _class ## Class; \
            const void * _class; \
     \
-    LOOP_SINGLE(def_OVERRIDE_METHOD, _super, override_methods) \
-    \
     static void \
     _class ## Class_ctor(struct _class ## Class * class, va_list * args_ptr) { \
         /* inherit */ \
@@ -253,10 +248,11 @@
         } \
     } \
     \
+    LOOP_SINGLE(def_OVERRIDE_METHOD, _super, override_methods) \
+    LOOP_SINGLE(def_OVERRIDE_METHOD, _class, methods) \
     LOOP_SINGLE(METHOD_STATIC_DECLARE, void, override_methods) \
     LOOP_SINGLE(METHOD_STATIC_DECLARE, void, methods) \
     LOOP_SINGLE(METHOD_STATIC_DECLARE, void, private_methods) \
-    LOOP_SINGLE(METHOD_PRIVATE_ALIAS, _class, private_methods) \
     \
     void \
     _class ## _init(void) { \
@@ -275,11 +271,12 @@
                     CLASS_SIZE(is_variable_size)LOOP_SINGLE(CLASS_INIT_OVERRIDE, _super, override_methods)LOOP_SINGLE(CLASS_INIT, temp, methods), \
                     0); \
         } \
-    }
+    } \
+    LOOP_SINGLE(METHOD_PRIVATE_ALIAS, _class, private_methods)
 #define CLASS_DEFINE_(...) CLASS_DEFINE__(__VA_ARGS__)
 #define def_class_(super, ...) CLASS_DEFINE_(CLASS, super, __VA_ARGS__, (CLASS_SUPER_MACRO(super, PUBLIC_METHODS)), (CLASS_MACRO(PUBLIC_OVERRIDE_METHODS)), (CLASS_MACRO(PUBLIC_METHODS)), (CLASS_MACRO(PRIVATE_METHODS)))
 #define def_class_0(super, ...) def_class_(super, CLASS_SIZE_FIXED)
 #define def_class_1(super, ...) def_class_(super, __VA_ARGS__)
-#define def_class(super, ...) def_SELECT(def_class_, ARG_SIZE(__VA_ARGS__))(super, __VA_ARGS__)
+#define def_class(class, super, ...) def_SELECT(def_class_, ARG_SIZE(__VA_ARGS__))(super, __VA_ARGS__)
 
 #endif

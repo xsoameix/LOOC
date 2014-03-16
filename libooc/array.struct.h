@@ -1,11 +1,11 @@
 #ifndef ARRAY_STRUCT_H
 #define ARRAY_STRUCT_H
 
-#include <libooc/class.struct.h>
+#include <libooc/object.struct.h>
 #include <libooc/array.h>
 
 struct Array {
-    const struct Class * class;
+    struct Object super;
     size_t len;
     size_t capa;
     void ** values;
