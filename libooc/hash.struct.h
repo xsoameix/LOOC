@@ -12,8 +12,8 @@ struct HashEntry {
 
 struct Hash {
     struct Object super;
-    size_t size;
-    size_t filled;
+    size_t capa;
+    size_t len;
     struct HashEntry * entries;
 };
 

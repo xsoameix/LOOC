@@ -60,11 +60,21 @@ def(shift, void *) {
     return element;
 }
 
-def(each, void : void (* @iter)(void * obj, size_t index)) {
+def(each, void : void (* @iter)(void * _self_, void * obj, size_t index) . void * @_self_) {
     void ** values = self->values;
     for(size_t i = 0, len = self->len; i < len; i++) {
-        iter(values[i], i);
+        iter(_self_, values[i], i);
     }
+}
+
+def(any_p, bool : bool (* @iter)(void * _self_, void * obj, size_t index) . void * @_self_) {
+    void ** values = self->values;
+    for(size_t i = 0, len = self->len; i < len; i++) {
+        if(iter(_self_, values[i], i)) {
+            return true;
+        }
+    }
+    return false;
 }
 
 private

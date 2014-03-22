@@ -17,7 +17,8 @@
     (_Array_pop), \
     (_Array_unshift), \
     (_Array_shift), \
-    (_Array_each)
+    (_Array_each), \
+    (_Array_any_p)
 #define _Array_PRIVATE_METHODS \
     (_Array_double_capa)
 #define _Array_ctor ctor, void, (va_list * args_ptr, args_ptr)
@@ -29,7 +30,8 @@
 #define _Array_pop pop, void *
 #define _Array_unshift unshift, void, (void * data, data)
 #define _Array_shift shift, void *
-#define _Array_each each, void, (void (* iter)(void * obj, size_t index), iter)
+#define _Array_each each, void, (void (* iter)(void * _self_, void * obj, size_t index), iter), (void * _self_, _self_)
+#define _Array_any_p any_p, bool, (bool (* iter)(void * _self_, void * obj, size_t index), iter), (void * _self_, _self_)
 #define _Array_double_capa double_capa, void, (size_t offset, offset)
 def_public_methods()
 
