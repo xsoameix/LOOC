@@ -16,7 +16,7 @@ override
 def(ctor, void : va_list * @args_ptr) {
     self->capa = DEFAULT_SIZE;
     self->len = 0;
-    self->entries = malloc(DEFAULT_SIZE * (sizeof(struct Hash)));
+    self->entries = calloc(1, DEFAULT_SIZE * (sizeof(struct Hash)));
 }
 
 override
@@ -147,7 +147,7 @@ def(rehash, void) {
 
     // Create the new entry array.
     struct HashEntry * entries = self->entries;
-    self->entries = malloc(capa * (sizeof(struct Hash)));
+    self->entries = calloc(1, capa * (sizeof(struct Hash)));
     for(size_t i = 0; i < old_capa; i++) {
         struct HashEntry entry = entries[i];
         if(entry.used) set(self, entry.key, entry.data);
