@@ -8,7 +8,7 @@
 
 static void
 Array_print(void * value, size_t index) {
-    printf("%zd: %s\n", index, Value_get_str(value));
+    printf("%zu: %s\n", index, Value_get_str(value));
 }
 
 int main(void) {
