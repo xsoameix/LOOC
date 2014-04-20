@@ -11,13 +11,18 @@ def_class(File, Object)
 override
 def(ctor, void : va_list * @args_ptr) {
     self->filename = va_arg(* args_ptr, char *);
+    self->content = NULL;
+    self->file = NULL;
 }
 
 override
 def(dtor, void) {
-    void * content = self->content;
-    free(inspect(content));
-    delete(content);
+    if(self->content != NULL) {
+        void * content = self->content;
+        free(inspect(content));
+        delete(content);
+        self->content = NULL;
+    }
     free(self);
 }
 
@@ -42,4 +47,28 @@ def(read, void *) {
     void * content = new(String, buffer);
     self->content = content;
     return content;
+}
+
+def(open, void : const char * @mode . void (* @func)(void * self, void * file) . void * @_self_) {
+    FILE * file = fopen(self->filename, mode);
+    self->file = file;
+    assert(file != NULL);
+    func(_self_, self);
+    fclose(file);
+    self->file = NULL;
+}
+
+void
+File_puts(void * _self, const char * string) {
+    struct File * self = _self;
+    fputs(string, self->file);
+}
+
+void
+File_printf(void * _self, const char * format, ...) {
+    struct File * self = _self;
+    va_list ap;
+    va_start(ap, format);
+    vfprintf(self->file, format, ap);
+    va_end(ap);
 }

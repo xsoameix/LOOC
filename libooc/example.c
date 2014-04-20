@@ -11,6 +11,12 @@ Array_print(void * value, size_t index) {
     printf("%zu: %s\n", index, Value_get_str(value));
 }
 
+static void
+write_file(void * null, void * file) {
+    File_puts(file, "hello");
+    File_printf(file, " w%drld", 0);
+}
+
 int main(void) {
     // static string
     Value_init();
@@ -47,5 +53,9 @@ int main(void) {
     void * file = new(File, "libooc/example");
     void * content = File_read(file);
     puts(Object_inspect(content));
+    delete(file);
+
+    file = new(File, "libooc/example-2");
+    File_open(file, "w", write_file, NULL);
     delete(file);
 }
