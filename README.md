@@ -2,6 +2,22 @@
 
 libooc is library with object oriented written in c.
 
+#   How to install
+
+1.  Download this repository.
+
+        $ git clone https://github.com/xsoameix/libooc -b develop
+
+2.  Compile.
+
+        $ cd libooc
+        $ ./autogen.sh
+        $ make
+
+3.  Install
+
+        $ sudo make install
+
 #   Define your class
 
 ##  Example: Circle
@@ -160,25 +176,6 @@ Run:
         Array_push(ary, b);
         Array_each(ary, Array_print);
         delete(ary);
-
-#   How to install
-
-1.  Download this repository.
-
-        $ git clone git://github.com/xsoameix/libooc.git
-
-2.  Change directory to libooc.
-
-        $ cd libooc
-
-3.  If `./configure` does not exist or is older than configure.in,
-    run autoconf to (re)generate configure.
-
-4.  Run `./configure`, which will generate config.h and Makefile.
-
-5.  Run `make`.
-
-6.  Run `make install`.
 
 #   Copying
 
