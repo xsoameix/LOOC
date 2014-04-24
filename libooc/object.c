@@ -93,7 +93,7 @@ class_ctor(void * self, va_list * args_ptr) {
     // override
     va_list args;
     va_copy(args, * args_ptr);
-    typedef void (* func)();
+    typedef void (* func)(void);
     func select, method;
     while(select = va_arg(args, func)) {
         method = va_arg(args, func);

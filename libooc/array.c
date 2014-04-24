@@ -28,6 +28,10 @@ def(get, void * : size_t @index) {
     return self->len > index ? self->values[index] : NULL;
 }
 
+def(first, void *) {
+    return self->len > 0 ? self->values[0] : NULL;
+}
+
 def(last, void *) {
     size_t len = self->len;
     return len > 0 ? self->values[len - 1] : NULL;

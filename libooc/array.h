@@ -12,6 +12,7 @@
 #define _Array_PUBLIC_METHODS \
     (_Array_len), \
     (_Array_get), \
+    (_Array_first), \
     (_Array_last), \
     (_Array_push), \
     (_Array_pop), \
@@ -25,6 +26,7 @@
 #define _Array_dtor dtor, void
 #define _Array_len len, size_t
 #define _Array_get get, void *, (size_t index, index)
+#define _Array_first first, void *
 #define _Array_last last, void *
 #define _Array_push push, void, (void * data, data)
 #define _Array_pop pop, void *

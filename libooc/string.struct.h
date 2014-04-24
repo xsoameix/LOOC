@@ -9,6 +9,6 @@ struct String {
     char * chars;
 };
 
-def_class_struct()
+def_class_struct_without_alias()
 
 #endif

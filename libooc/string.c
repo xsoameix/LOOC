@@ -38,3 +38,49 @@ override
 def(inspect, char *) {
     return self->chars;
 }
+
+def(set, void : char * @chars) {
+    self->chars = chars;
+}
+
+def(index, size_t : bool (* @func)(void * _self_, char c) . void * @_self_) {
+    char * chars = self->chars;
+    size_t len = strlen(chars);
+    for(size_t i = 0; i < len; i++) {
+        if(func(_self_, chars[i])) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+def(rindex, size_t : bool (* @func)(void * _self_, char c) . void * @_self_) {
+    char * chars = self->chars;
+    size_t len = strlen(chars);
+    while(len > 0) {
+        len -= 1;
+        if(func(_self_, chars[len])) {
+            return len;
+        }
+    }
+    return -1;
+}
+
+static bool
+not_whitespace_p(void * null, char c) {
+    return !(c == ' ' || c == '\t' ||
+            c == 0x0A || c == 0x0D);
+}
+
+def(strip, void) {
+    char * chars = self->chars;
+    size_t start = String_index(self, not_whitespace_p, NULL);
+    if(start == -1) start = 0;
+    size_t end = String_rindex(self, not_whitespace_p, NULL);
+    if(end == -1) end = strlen(chars) - 1;
+    size_t len = end - start + 1;
+    if(start > 0) {
+        memmove(chars, chars + start, len);
+    }
+    chars[len] = '\0';
+}

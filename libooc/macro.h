@@ -271,6 +271,13 @@
     LOOP_MULTIPLE(METHOD_STATIC_ALIAS, _class, CLASS_MACRO(PUBLIC_METHODS))
 #define def_CLASS_STRUCT_(class) def_CLASS_STRUCT__(class)
 #define def_class_struct() def_CLASS_STRUCT_(CLASS)
+#define def_CLASS_STRUCT_WITHOUT_ALIAS__(_class) \
+    struct _class ## Class { \
+        const struct ObjectClass class; \
+        LOOP_MULTIPLE(METHOD_POINTER_DEFINE, void, CLASS_MACRO(PUBLIC_METHODS)) \
+    };
+#define def_CLASS_STRUCT_WITHOUT_ALIAS_(class) def_CLASS_STRUCT_WITHOUT_ALIAS__(class)
+#define def_class_struct_without_alias() def_CLASS_STRUCT_WITHOUT_ALIAS_(CLASS)
 
 // === *.c ===
 // public macros:
@@ -336,7 +343,7 @@
         /* override */ \
         va_list args; \
         va_copy(args, * args_ptr); \
-        typedef void (* func)(); \
+        typedef void (* func)(void); \
         func select, method; \
         while(select = va_arg(args, func)) { \
             method = va_arg(args, func); \
