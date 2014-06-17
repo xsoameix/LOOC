@@ -14,15 +14,19 @@ def_class(Hash, Object)
 
 override
 def(ctor, void : va_list * @args_ptr) {
-    self->size = DEFAULT_SIZE;
-    self->filled = 0;
-    self->entries = malloc(DEFAULT_SIZE * (sizeof(struct Hash)));
+    self->capa = DEFAULT_SIZE;
+    self->len = 0;
+    self->entries = calloc(1, DEFAULT_SIZE * (sizeof(struct Hash)));
 }
 
 override
 def(dtor, void) {
     free(self->entries);
     free(self);
+}
+
+def(len, size_t) {
+    return self->len;
 }
 
 def(set, bool : void * @key . void * @data) {
@@ -37,11 +41,26 @@ def(get, void * : void * @key) {
     return NULL;
 }
 
-def(each, void : void (* @iter)(void * key, void * data)) {
+static void
+intersact_p_iter(void * union_set, void * key, void * data) {
+    set(union_set, key, data);
+}
+
+def(intersact_p, bool : void * @set) {
+    if(self->len == 0 || len(set) == 0) return false;
+    void * union_set = new(Hash);
+    each(self, intersact_p_iter, union_set);
+    each(set, intersact_p_iter, union_set);
+    size_t union_len = len(union_set);
+    delete(union_set);
+    return union_len < self->len + len(set);
+}
+
+def(each, void : void (* @iter)(void * _self_, void * key, void * data) . void * @_self_) {
     struct HashEntry * entries = self->entries;
-    for(size_t i = 0, size = self->size; i < size; i++) {
+    for(size_t i = 0, capa = self->capa; i < capa; i++) {
         struct HashEntry entry = entries[i];
-        if(entry.used) iter(entry.key, entry.data);
+        if(entry.used) iter(_self_, entry.key, entry.data);
     }
 }
 
@@ -58,7 +77,7 @@ private
 def(search, bool : void * @_key . void * @data . void ** @ret . enum ACTION @action) {
     struct Object * key = _key;
     size_t hval = hash_code(key);
-    size_t i = hval % self->size; // First hash function.
+    size_t i = hval % self->capa; // First hash function.
 
     // There are 3 possibilities:
     // 1. The slot is used, same key.
@@ -72,10 +91,10 @@ def(search, bool : void * @_key . void * @data . void ** @ret . enum ACTION @act
         // Possibility 2.
     } else if(entries[i].used) {
         // The second hash function can't be 0.
-        size_t hval2 = 1 + hval % (self->size - 1);
+        size_t hval2 = 1 + hval % (self->capa - 1);
         size_t first = i;
         do {
-            i = (i + hval2) % self->size;
+            i = (i + hval2) % self->capa;
             if(i == first) {
                 // If all of slots are Possibility 2. The end is here.
                 return false;
@@ -95,13 +114,13 @@ def(search, bool : void * @_key . void * @data . void ** @ret . enum ACTION @act
     case Set:
         // Possibility 3.
         if(!select->used) {
-            self->filled++;
+            self->len++;
         }
         select->used = hval;
         select->key  = key;
         select->data = data;
         float ratio = 0.8;
-        if(((float) self->filled) / self->size > ratio) {
+        if(((float) self->len) / self->capa > ratio) {
             rehash(self);
         }
         break;
@@ -119,17 +138,17 @@ def(search, bool : void * @_key . void * @data . void ** @ret . enum ACTION @act
 
 private
 def(rehash, void) {
-    // Make the new size is double and odd.
-    size_t old_size = self->size;
-    size_t size = old_size * 2 + 1;
-    while(!prime_p(self, size)) size += 2;
-    self->size = size;
-    self->filled = 0;
+    // Make the new capa is double and odd.
+    size_t old_capa = self->capa;
+    size_t capa = old_capa * 2 + 1;
+    while(!prime_p(self, capa)) capa += 2;
+    self->capa = capa;
+    self->len = 0;
 
     // Create the new entry array.
     struct HashEntry * entries = self->entries;
-    self->entries = malloc(size * (sizeof(struct Hash)));
-    for(size_t i = 0; i < old_size; i++) {
+    self->entries = calloc(1, capa * (sizeof(struct Hash)));
+    for(size_t i = 0; i < old_capa; i++) {
         struct HashEntry entry = entries[i];
         if(entry.used) set(self, entry.key, entry.data);
     }

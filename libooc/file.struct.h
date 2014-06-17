@@ -8,6 +8,7 @@ struct File {
     struct Object super;
     char * filename;
     void * content;
+    FILE * file;
 };
 
 def_class_struct()

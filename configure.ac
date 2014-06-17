@@ -4,7 +4,7 @@
 AC_PREREQ([2.68])
 AC_INIT([libooc], [0.0.1], [xsoameix@gmail.com])
 AM_INIT_AUTOMAKE
-AC_CONFIG_SRCDIR([libooc/libooc.c])
+AC_CONFIG_SRCDIR([libooc/object.c])
 AC_CONFIG_HEADERS([config.h])
 
 # Checks for programs.

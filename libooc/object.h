@@ -4,6 +4,7 @@
 #include <stdarg.h>
 #include <stddef.h>
 #include <stdbool.h>
+#include <inttypes.h>
 #include <libooc/macro.h>
 
 #undef CLASS
@@ -21,6 +22,7 @@
 #define _Object_equals    equals,     bool,   (void * obj, obj)
 #define _Object_hash_code hash_code,  size_t
 #define _Object_inspect   inspect,    char *
+def_public_methods()
 
 void * new(const void * klass, ...);
 void   delete(void * obj);
