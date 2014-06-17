@@ -4,6 +4,7 @@
 #include <stdarg.h>
 #include <stddef.h>
 #include <stdbool.h>
+#include <inttypes.h>
 #include <libooc/macro.h>
 
 #undef CLASS

@@ -328,8 +328,9 @@
 #define CLASS_CTOR_(...) CLASS_CTOR__(__VA_ARGS__)
 #define CLASS_CTOR(...) CLASS_CTOR_(CLASS, __VA_ARGS__)
 #define CLASS_SIZE(size) size
-#define CLASS_SIZE_FIXED 0
-#define CLASS_SIZE_VARIABLE 1
+#define CLASS_SIZE_FIXED (uintptr_t) 0
+#define CLASS_SIZE_VARIABLE (uintptr_t) 1
+#define CLASS_OVERRIDE_EOF (uintptr_t) 0
 #define CLASS_DEFINE__(_class, _super, is_variable_size, super_methods, override_methods, methods, private_methods) \
     static const void * _class ## Class; \
            const void * _class; \
@@ -360,19 +361,16 @@
     void \
     _class ## _init(void) { \
         if(!_class ## Class) { \
-            _class ## Class = new(Class, \
-                    Class, #_class "Class", \
-                    sizeof(struct _class ## Class), \
-                    0, \
-                    Object_ctor, _class ## Class_ctor, \
-                    0); \
+            uintptr_t name = (uintptr_t) #_class "Class"; \
+            uintptr_t size = sizeof(struct _class ## Class); \
+            _class ## Class = new(Class, Class, name, size, CLASS_SIZE_FIXED, \
+                    Object_ctor, _class ## Class_ctor, CLASS_OVERRIDE_EOF); \
         } \
         if(!_class) { \
-            _class = new(_class ## Class, \
-                    _super, #_class, \
-                    sizeof(struct _class), \
-                    CLASS_SIZE(is_variable_size)LOOP_SINGLE(CLASS_INIT_OVERRIDE, _super, override_methods)LOOP_SINGLE(CLASS_INIT, temp, methods), \
-                    0); \
+            uintptr_t name = (uintptr_t) #_class; \
+            uintptr_t size = sizeof(struct _class); \
+            _class = new(_class ## Class, _super, name, size, \
+                    CLASS_SIZE(is_variable_size)LOOP_SINGLE(CLASS_INIT_OVERRIDE, _super, override_methods)LOOP_SINGLE(CLASS_INIT, temp, methods), CLASS_OVERRIDE_EOF); \
         } \
     } \
     LOOP_SINGLE(METHOD_PRIVATE_ALIAS, _class, private_methods)
