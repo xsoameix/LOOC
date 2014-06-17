@@ -56,11 +56,11 @@ def(index, size_t : bool (* @func)(void * _self_, char c) . void * @_self_) {
 
 def(rindex, size_t : bool (* @func)(void * _self_, char c) . void * @_self_) {
     char * chars = self->chars;
-    size_t len = strlen(chars);
-    while(len > 0) {
-        len -= 1;
-        if(func(_self_, chars[len])) {
-            return len;
+    size_t i = strlen(chars);
+    while(i > 0) {
+        i -= 1;
+        if(func(_self_, chars[i])) {
+            return i;
         }
     }
     return -1;

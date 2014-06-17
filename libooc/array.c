@@ -71,6 +71,16 @@ def(each, void : void (* @iter)(void * _self_, void * obj, size_t index) . void 
     }
 }
 
+def(reverse_each, void : void (* @iter)(void * _self_, void * obj, size_t index) . void * @_self_) {
+    void ** values = self->values;
+    size_t len = self->len;
+    size_t i = len;
+    while(i > 0) {
+        i -= 1;
+        iter(_self_, values[i], len - i - 1);
+    }
+}
+
 def(any_p, bool : bool (* @iter)(void * _self_, void * obj, size_t index) . void * @_self_) {
     void ** values = self->values;
     for(size_t i = 0, len = self->len; i < len; i++) {
