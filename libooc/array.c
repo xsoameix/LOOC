@@ -2,6 +2,7 @@
 #include <string.h>
 
 #include "array.struct.h"
+#include "inttype.h"
 
 #define DEFAULT_SIZE 2
 
@@ -20,11 +21,11 @@ def(dtor, void) {
     free(self);
 }
 
-def(len, size_t) {
+def(len, uint_t) {
     return self->len;
 }
 
-def(get, void * : size_t @index) {
+def(get, void * : uint_t @index) {
     return self->len > index ? self->values[index] : NULL;
 }
 
@@ -33,7 +34,7 @@ def(first, void *) {
 }
 
 def(last, void *) {
-    size_t len = self->len;
+    uint_t len = self->len;
     return len > 0 ? self->values[len - 1] : NULL;
 }
 
@@ -64,26 +65,26 @@ def(shift, void *) {
     return element;
 }
 
-def(each, void : void (* @iter)(void * _self_, void * obj, size_t index) . void * @_self_) {
+def(each, void : void (* @iter)(void * _self_, void * obj, uint_t index) . void * @_self_) {
     void ** values = self->values;
-    for(size_t i = 0, len = self->len; i < len; i++) {
+    for(uint_t i = 0, len = self->len; i < len; i++) {
         iter(_self_, values[i], i);
     }
 }
 
-def(reverse_each, void : void (* @iter)(void * _self_, void * obj, size_t index) . void * @_self_) {
+def(reverse_each, void : void (* @iter)(void * _self_, void * obj, uint_t index) . void * @_self_) {
     void ** values = self->values;
-    size_t len = self->len;
-    size_t i = len;
+    uint_t len = self->len;
+    uint_t i = len;
     while(i > 0) {
         i -= 1;
         iter(_self_, values[i], len - i - 1);
     }
 }
 
-def(any_p, bool : bool (* @iter)(void * _self_, void * obj, size_t index) . void * @_self_) {
+def(any_p, bool : bool (* @iter)(void * _self_, void * obj, uint_t index) . void * @_self_) {
     void ** values = self->values;
-    for(size_t i = 0, len = self->len; i < len; i++) {
+    for(uint_t i = 0, len = self->len; i < len; i++) {
         if(iter(_self_, values[i], i)) {
             return true;
         }
@@ -92,8 +93,8 @@ def(any_p, bool : bool (* @iter)(void * _self_, void * obj, size_t index) . void
 }
 
 private
-def(double_capa, void : size_t @offset) {
-    size_t capa = self->len * 2;
+def(double_capa, void : uint_t @offset) {
+    uint_t capa = self->len * 2;
     void ** values = malloc(capa * sizeof(void *));
     memcpy(&values[offset], self->values, self->len * sizeof(void *));
     free(self->values);

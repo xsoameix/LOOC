@@ -6,8 +6,8 @@
 
 struct Array {
     struct Object super;
-    size_t len;
-    size_t capa;
+    ooc_uint len;
+    ooc_uint capa;
     void ** values;
 };
 

@@ -5,12 +5,13 @@
 #include "string.struct.h"
 #include "string.conflict.h"
 #include "value.h"
+#include "inttype.h"
 
 const void * StaticString;
 
 static void   StaticString_dtor(void * self);
 static bool   StaticString_equals(void * _self, void * _obj);
-static size_t StaticString_hash_code(void * self);
+static uint_t StaticString_hash_code(void * self);
 
 void
 Value_init(void) {
@@ -56,13 +57,13 @@ StaticString_equals(void * _self, void * _obj) {
             strcmp(Value_get_str(self), Value_get_str(obj)) == 0);
 }
 
-static size_t
+static uint_t
 StaticString_hash_code(void * self) {
     Value * value = self;
     char * string = Value_get_str(value);
-    size_t len = strlen(string);
-    size_t hval = len;
-    for(size_t i = 0; i < len; i++) {
+    uint_t len = strlen(string);
+    uint_t hval = len;
+    for(uint_t i = 0; i < len; i++) {
         hval <<= 4;
         hval += string[i];
     }

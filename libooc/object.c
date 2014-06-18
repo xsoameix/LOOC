@@ -3,15 +3,16 @@
 #include <string.h>
 
 #include "object.struct.h"
+#include "inttype.h"
 
 static void   class_ctor(void * self, va_list * args_ptr);
 static void   class_dtor(void * self);
 static void   object_ctor(void * self, va_list * args_ptr);
 static void   object_dtor(void * self);
 static bool   object_equals(void * self, void * obj);
-static size_t object_hash_code(void * self);
+static uint_t object_hash_code(void * self);
 static char * object_inspect(void * self);
-static size_t size_of(const void * obj);
+static uint_t size_of(const void * obj);
 
 static struct ObjectClass classes[2] = {
     {
@@ -81,9 +82,9 @@ class_ctor(void * self, va_list * args_ptr) {
     struct ObjectClass * class = self;
     class->super = va_arg(* args_ptr, struct ObjectClass *);
     class->name = va_arg(* args_ptr, char *);
-    class->size = va_arg(* args_ptr, size_t);
-    class->is_variable_size = va_arg(* args_ptr, size_t);
-    size_t offset = offsetof(struct ObjectClass, ctor);
+    class->size = va_arg(* args_ptr, uint_t);
+    class->is_variable_size = va_arg(* args_ptr, uint_t);
+    uint_t offset = offsetof(struct ObjectClass, ctor);
 
     // inherit
     memcpy((char *) class + offset,
@@ -136,15 +137,15 @@ object_equals(void * self, void * obj) {
     return self == obj;
 }
 
-size_t
+uint_t
 Object_hash_code(void * self) {
     struct ObjectClass * class = self;
     return class->class->hash_code(class);
 }
 
-static size_t
+static uint_t
 object_hash_code(void * self) {
-    return (size_t) self;
+    return (uint_t) self;
 }
 
 char *
@@ -159,7 +160,7 @@ object_inspect(void * self) {
     return object->class->name;
 }
 
-static size_t
+static uint_t
 size_of(const void * obj) {
     const struct Object * object = obj;
     return object->class->size;

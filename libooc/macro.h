@@ -189,7 +189,7 @@
 //
 //     struct Foo {
 //         const struct Class * class;
-//         size_t bar;
+//         uint_t bar;
 //     };
 //
 //     #endif
@@ -217,15 +217,15 @@
 //     // 3:   The first argument.
 //     //      The type is 'va_list * args_ptr', and the variable name is 'args_ptr'
 //
-//     #define FOO_bar bar, size_t, (size_t a, a), (size_t b, b)
+//     #define FOO_bar bar, uint_t, (uint_t a, a), (uint_t b, b)
 //     //               v     v           v              v
 //     //               1.    2.          3.             4.
 //     // 1:   The method name is 'bar'.
-//     // 2:   The return type is 'size_t'.
+//     // 2:   The return type is 'uint_t'.
 //     // 3:   The first argument.
-//     //      The type is 'size_t a', and the variable name is 'a'
+//     //      The type is 'uint_t a', and the variable name is 'a'
 //     // 4:   The second argument.
-//     //      The type is 'size_t b', and the variable name is 'b'
+//     //      The type is 'uint_t b', and the variable name is 'b'
 //
 //     def_methods()
 //
@@ -328,9 +328,9 @@
 #define CLASS_CTOR_(...) CLASS_CTOR__(__VA_ARGS__)
 #define CLASS_CTOR(...) CLASS_CTOR_(CLASS, __VA_ARGS__)
 #define CLASS_SIZE(size) size
-#define CLASS_SIZE_FIXED (uintptr_t) 0
-#define CLASS_SIZE_VARIABLE (uintptr_t) 1
-#define CLASS_OVERRIDE_EOF (uintptr_t) 0
+#define CLASS_SIZE_FIXED (ooc_uint) 0
+#define CLASS_SIZE_VARIABLE (ooc_uint) 1
+#define CLASS_OVERRIDE_EOF (ooc_uint) 0
 #define CLASS_DEFINE__(_class, _super, is_variable_size, super_methods, override_methods, methods, private_methods) \
     static const void * _class ## Class; \
            const void * _class; \
@@ -361,14 +361,14 @@
     void \
     _class ## _init(void) { \
         if(!_class ## Class) { \
-            uintptr_t name = (uintptr_t) #_class "Class"; \
-            uintptr_t size = sizeof(struct _class ## Class); \
+            ooc_uint name = (ooc_uint) #_class "Class"; \
+            ooc_uint size = sizeof(struct _class ## Class); \
             _class ## Class = new(Class, Class, name, size, CLASS_SIZE_FIXED, \
                     Object_ctor, _class ## Class_ctor, CLASS_OVERRIDE_EOF); \
         } \
         if(!_class) { \
-            uintptr_t name = (uintptr_t) #_class; \
-            uintptr_t size = sizeof(struct _class); \
+            ooc_uint name = (ooc_uint) #_class; \
+            ooc_uint size = sizeof(struct _class); \
             _class = new(_class ## Class, _super, name, size, \
                     CLASS_SIZE(is_variable_size)LOOP_SINGLE(CLASS_INIT_OVERRIDE, _super, override_methods)LOOP_SINGLE(CLASS_INIT, temp, methods), CLASS_OVERRIDE_EOF); \
         } \

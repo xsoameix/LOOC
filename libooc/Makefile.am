@@ -19,7 +19,8 @@ liboocinclude_HEADERS = \
     array.struct.h      \
     array.h             \
     value.h             \
-    file.h
+    file.h              \
+    inttype.h
 
 # libooc
 bin_PROGRAMS = bin/example

@@ -5,6 +5,7 @@
 #include <libooc/string.conflict.h>
 
 #include "file.struct.h"
+#include "inttype.h"
 
 def_class(File, Object)
 
@@ -32,16 +33,16 @@ def(read, void *) {
 
     // obtain the size
     fseek(file, 0, SEEK_END);
-    long size = ftell(file);
+    uint_t size = ftell(file);
     rewind(file);
 
     // read into buffer
     char * buffer = malloc(size + 1); // EOF = 1 char
-    size_t read = fread(buffer, 1, size, file);
+    uint_t read = fread(buffer, 1, size, file);
     assert(read == size);
 
     // add EOF
-    buffer[(int) size] = '\0';
+    buffer[size] = '\0';
 
     fclose(file);
     void * content = new(String, buffer);

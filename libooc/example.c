@@ -5,9 +5,10 @@
 #include "hash.h"
 #include "array.h"
 #include "file.h"
+#include "inttype.h"
 
 static void
-Array_print(void * value, size_t index) {
+Array_print(void * value, uint_t index) {
     printf("%zu: %s\n", index, Value_get_str(value));
 }
 

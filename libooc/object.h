@@ -7,6 +7,9 @@
 #include <inttypes.h>
 #include <libooc/macro.h>
 
+typedef intptr_t ooc_int;
+typedef uintptr_t ooc_uint;
+
 #undef CLASS
 #define CLASS Object
 #define _Object_PUBLIC_OVERRIDE_METHODS

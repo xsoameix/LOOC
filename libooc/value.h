@@ -6,15 +6,11 @@
 typedef struct {
     struct Object super;
     union {
-        int                v_int;
-        unsigned int       v_uint;
-        long               v_long;
-        unsigned long      v_ulong;
-        long long          v_int64;
-        unsigned long long v_uint64;
-        float              v_float;
-        double             v_double;
-        void *             v_pointer;
+        ooc_int  v_int;
+        ooc_uint v_uint;
+        float    v_float;
+        double   v_double;
+        void *   v_pointer;
     };
 } Value;
 

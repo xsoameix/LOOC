@@ -5,15 +5,15 @@
 #include <libooc/hash.h>
 
 struct HashEntry {
-    size_t used;
-    void * key;
-    void * data;
+    ooc_uint used;
+    void *     key;
+    void *     data;
 };
 
 struct Hash {
     struct Object super;
-    size_t capa;
-    size_t len;
+    ooc_uint capa;
+    ooc_uint len;
     struct HashEntry * entries;
 };
 

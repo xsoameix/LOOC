@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "string.struct.h"
+#include "inttype.h"
 
 def_class(String, Object)
 
@@ -24,10 +25,10 @@ def(equals, bool : void * @_obj) {
 }
 
 override
-def(hash_code, size_t) {
-    size_t len = strlen(self->chars);
-    size_t hval = len;
-    for(size_t i = 0; i < len; i++) {
+def(hash_code, uint_t) {
+    uint_t len = strlen(self->chars);
+    uint_t hval = len;
+    for(uint_t i = 0; i < len; i++) {
         hval <<= 4;
         hval += self->chars[i];
     }
@@ -43,10 +44,10 @@ def(set, void : char * @chars) {
     self->chars = chars;
 }
 
-def(index, size_t : bool (* @func)(void * _self_, char c) . void * @_self_) {
+def(index, uint_t : bool (* @func)(void * _self_, char c) . void * @_self_) {
     char * chars = self->chars;
-    size_t len = strlen(chars);
-    for(size_t i = 0; i < len; i++) {
+    uint_t len = strlen(chars);
+    for(uint_t i = 0; i < len; i++) {
         if(func(_self_, chars[i])) {
             return i;
         }
@@ -54,9 +55,9 @@ def(index, size_t : bool (* @func)(void * _self_, char c) . void * @_self_) {
     return -1;
 }
 
-def(rindex, size_t : bool (* @func)(void * _self_, char c) . void * @_self_) {
+def(rindex, uint_t : bool (* @func)(void * _self_, char c) . void * @_self_) {
     char * chars = self->chars;
-    size_t i = strlen(chars);
+    uint_t i = strlen(chars);
     while(i > 0) {
         i -= 1;
         if(func(_self_, chars[i])) {
@@ -74,11 +75,11 @@ not_whitespace_p(void * null, char c) {
 
 def(strip, void) {
     char * chars = self->chars;
-    size_t start = String_index(self, not_whitespace_p, NULL);
+    uint_t start = String_index(self, not_whitespace_p, NULL);
     if(start == -1) start = 0;
-    size_t end = String_rindex(self, not_whitespace_p, NULL);
+    uint_t end = String_rindex(self, not_whitespace_p, NULL);
     if(end == -1) end = strlen(chars) - 1;
-    size_t len = end - start + 1;
+    uint_t len = end - start + 1;
     if(start > 0) {
         memmove(chars, chars + start, len);
     }
