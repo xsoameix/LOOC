@@ -5,7 +5,7 @@
 #include "string.struct.h"
 #include "inttype.h"
 
-def_class(String, Object)
+O_DEF_CLASS(String, Object)
 
 override
 def(ctor, void : va_list * @args_ptr) {

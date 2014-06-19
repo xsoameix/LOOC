@@ -11,7 +11,7 @@ enum ACTION {
     Get
 };
 
-def_class(Hash, Object)
+O_DEF_CLASS(Hash, Object)
 
 override
 def(ctor, void : va_list * @args_ptr) {

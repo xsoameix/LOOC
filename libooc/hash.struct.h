@@ -1,5 +1,5 @@
-#ifndef HASH_STRUCT_H
-#define HASH_STRUCT_H
+#ifndef O_HASH_STRUCT_H
+#define O_HASH_STRUCT_H
 
 #include <libooc/object.struct.h>
 #include <libooc/hash.h>
@@ -17,6 +17,6 @@ struct Hash {
     struct HashEntry * entries;
 };
 
-def_class_struct()
+O_DEF_CLASS_STRUCT()
 
 #endif

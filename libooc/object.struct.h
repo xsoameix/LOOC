@@ -1,5 +1,5 @@
-#ifndef OBJECT_STRUCT_H
-#define OBJECT_STRUCT_H
+#ifndef O_OBJECT_STRUCT_H
+#define O_OBJECT_STRUCT_H
 
 #include "object.h"
 
