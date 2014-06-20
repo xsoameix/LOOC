@@ -7,8 +7,8 @@
 #include <inttypes.h>
 #include <libooc/macro.h>
 
-typedef intptr_t ooc_int;
-typedef uintptr_t ooc_uint;
+typedef intptr_t o_int;
+typedef uintptr_t o_uint;
 
 #undef O_CLASS
 #undef O_PARENT
@@ -20,7 +20,7 @@ typedef uintptr_t ooc_uint;
 #define O_Object_PUBLIC_METHOD_0 ctor,       void,   (va_list * args_ptr, args_ptr)
 #define O_Object_PUBLIC_METHOD_1 dtor,       void
 #define O_Object_PUBLIC_METHOD_2 equals,     bool,   (void * obj, obj)
-#define O_Object_PUBLIC_METHOD_3 hash_code,  ooc_uint
+#define O_Object_PUBLIC_METHOD_3 hash_code,  o_uint
 #define O_Object_PUBLIC_METHOD_4 inspect,    char *
 #define O_Object_ctor      O_PUBLIC_METHOD_0
 #define O_Object_dtor      O_PUBLIC_METHOD_1

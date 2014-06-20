@@ -15,12 +15,12 @@
 #define O_Hash_PRIVATE_METHODS_LEN 3
 #define O_Hash_OVERRIDE_METHOD_0 ctor, void, (va_list * args_ptr, args_ptr)
 #define O_Hash_OVERRIDE_METHOD_1 dtor, void
-#define O_Hash_PUBLIC_METHOD_0 len, ooc_uint
+#define O_Hash_PUBLIC_METHOD_0 len, o_uint
 #define O_Hash_PUBLIC_METHOD_1 set, bool, (void * key, key), (void * data, data)
 #define O_Hash_PUBLIC_METHOD_2 get, void *, (void * key, key)
 #define O_Hash_PUBLIC_METHOD_3 intersact_p, bool, (void * set, set)
 #define O_Hash_PUBLIC_METHOD_4 each, void, (void (* iter)(void * _self_, void * key, void * data), iter), (void * _self_, _self_)
-#define O_Hash_PRIVATE_METHOD_0 prime_p, bool, (ooc_uint n, n)
+#define O_Hash_PRIVATE_METHOD_0 prime_p, bool, (o_uint n, n)
 #define O_Hash_PRIVATE_METHOD_1 search, bool, (void * _key, _key), (void * data, data), (void ** ret, ret), (enum ACTION action, action)
 #define O_Hash_PRIVATE_METHOD_2 rehash, void
 #define O_Hash_ctor O_Hash_OVERRIDE_METHOD_0

@@ -15,18 +15,18 @@
 #define O_Array_PRIVATE_METHODS_LEN 1
 #define O_Array_OVERRIDE_METHOD_0 ctor, void, (va_list * args_ptr, args_ptr)
 #define O_Array_OVERRIDE_METHOD_1 dtor, void
-#define O_Array_PUBLIC_METHOD_0 len, ooc_uint
-#define O_Array_PUBLIC_METHOD_1 get, void *, (ooc_uint index, index)
+#define O_Array_PUBLIC_METHOD_0 len, o_uint
+#define O_Array_PUBLIC_METHOD_1 get, void *, (o_uint index, index)
 #define O_Array_PUBLIC_METHOD_2 first, void *
 #define O_Array_PUBLIC_METHOD_3 last, void *
 #define O_Array_PUBLIC_METHOD_4 push, void, (void * data, data)
 #define O_Array_PUBLIC_METHOD_5 pop, void *
 #define O_Array_PUBLIC_METHOD_6 unshift, void, (void * data, data)
 #define O_Array_PUBLIC_METHOD_7 shift, void *
-#define O_Array_PUBLIC_METHOD_8 each, void, (void (* iter)(void * _self_, void * obj, ooc_uint index), iter), (void * _self_, _self_)
-#define O_Array_PUBLIC_METHOD_9 reverse_each, void, (void (* iter)(void * _self_, void * obj, ooc_uint index), iter), (void * _self_, _self_)
-#define O_Array_PUBLIC_METHOD_10 any_p, bool, (bool (* iter)(void * _self_, void * obj, ooc_uint index), iter), (void * _self_, _self_)
-#define O_Array_PRIVATE_METHOD_0 double_capa, void, (ooc_uint offset, offset)
+#define O_Array_PUBLIC_METHOD_8 each, void, (void (* iter)(void * _self_, void * obj, o_uint index), iter), (void * _self_, _self_)
+#define O_Array_PUBLIC_METHOD_9 reverse_each, void, (void (* iter)(void * _self_, void * obj, o_uint index), iter), (void * _self_, _self_)
+#define O_Array_PUBLIC_METHOD_10 any_p, bool, (bool (* iter)(void * _self_, void * obj, o_uint index), iter), (void * _self_, _self_)
+#define O_Array_PRIVATE_METHOD_0 double_capa, void, (o_uint offset, offset)
 #define O_Array_ctor O_Array_OVERRIDE_METHOD_0
 #define O_Array_dtor O_Array_OVERRIDE_METHOD_1
 #define O_Array_len O_Array_PUBLIC_METHOD_0

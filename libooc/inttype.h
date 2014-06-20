@@ -5,7 +5,7 @@
 
 #include "object.h"
 
-typedef ooc_int int_t;
-typedef ooc_uint uint_t;
+typedef o_int int_t;
+typedef o_uint uint_t;
 
 #endif

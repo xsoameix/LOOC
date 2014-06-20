@@ -6,11 +6,11 @@
 typedef struct {
     struct Object super;
     union {
-        ooc_int  v_int;
-        ooc_uint v_uint;
-        float    v_float;
-        double   v_double;
-        void *   v_pointer;
+        o_int  v_int;
+        o_uint v_uint;
+        float  v_float;
+        double v_double;
+        void * v_pointer;
     };
 } Value;
 

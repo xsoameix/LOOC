@@ -78,21 +78,21 @@
         void \
         _class ## _init(void) { \
             if(!_class ## Class) { \
-                ooc_uint name = (ooc_uint) #_class "Class"; \
-                ooc_uint size = sizeof(struct _class ## Class); \
+                o_uint name = (o_uint) #_class "Class"; \
+                o_uint size = sizeof(struct _class ## Class); \
                 _class ## Class = new(Class, Class, name, size, O_CLASS_SIZE_FIXED, \
                         Object_ctor, _class ## Class_ctor, O_CLASS_OVERRIDE_EOF); \
             } \
             if(!_class) { \
-                ooc_uint name = (ooc_uint) #_class; \
-                ooc_uint size = sizeof(struct _class); \
+                o_uint name = (o_uint) #_class; \
+                o_uint size = sizeof(struct _class); \
                 _class = new(_class ## Class, parent, name, size, \
                         O_STR_COPY(is_variable_size)O_OVERRIDE_METHODS_IN_INIT()O_PUBLIC_METHODS_IN_INIT, O_CLASS_OVERRIDE_EOF); \
             } \
         }
-#define O_CLASS_SIZE_FIXED (ooc_uint) 0
-#define O_CLASS_SIZE_VARIABLE (ooc_uint) 1
-#define O_CLASS_OVERRIDE_EOF (ooc_uint) 0
+#define O_CLASS_SIZE_FIXED (o_uint) 0
+#define O_CLASS_SIZE_VARIABLE (o_uint) 1
+#define O_CLASS_OVERRIDE_EOF (o_uint) 0
 
 #define O_PUBLIC_METHODS_IN_CTOR O_PUBLIC_METHODS(O_PUBLIC_METHOD_IN_CTOR)
 #define O_PUBLIC_METHOD_IN_CTOR(_class, parent, name, ...) \

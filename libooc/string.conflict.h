@@ -16,11 +16,11 @@
 #define O_String_OVERRIDE_METHOD_0 ctor, void, (va_list * args_ptr, args_ptr)
 #define O_String_OVERRIDE_METHOD_1 dtor, void
 #define O_String_OVERRIDE_METHOD_2 equals, bool, (void * _obj, _obj)
-#define O_String_OVERRIDE_METHOD_3 hash_code, ooc_uint
+#define O_String_OVERRIDE_METHOD_3 hash_code, o_uint
 #define O_String_OVERRIDE_METHOD_4 inspect, char *
 #define O_String_PUBLIC_METHOD_0 set, void, (char * chars, chars)
-#define O_String_PUBLIC_METHOD_1 index, ooc_uint, (bool (* func)(void * _self_, char c), func), (void * _self_, _self_)
-#define O_String_PUBLIC_METHOD_2 rindex, ooc_uint, (bool (* func)(void * _self_, char c), func), (void * _self_, _self_)
+#define O_String_PUBLIC_METHOD_1 index, o_uint, (bool (* func)(void * _self_, char c), func), (void * _self_, _self_)
+#define O_String_PUBLIC_METHOD_2 rindex, o_uint, (bool (* func)(void * _self_, char c), func), (void * _self_, _self_)
 #define O_String_PUBLIC_METHOD_3 strip, void
 #define O_String_ctor O_String_OVERRIDE_METHOD_0
 #define O_String_dtor O_String_OVERRIDE_METHOD_1
