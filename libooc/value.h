@@ -1,5 +1,5 @@
-#ifndef VALUE_H
-#define VALUE_H
+#ifndef O_VALUE_H
+#define O_VALUE_H
 
 #include <libooc/object.struct.h>
 

@@ -26,7 +26,7 @@ Value_init(void) {
                 Object_dtor,      StaticString_dtor,
                 Object_equals,    StaticString_equals,
                 Object_hash_code, StaticString_hash_code,
-                0);
+                (uint_t) 0);
     }
 }
 

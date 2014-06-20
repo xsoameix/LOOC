@@ -1,5 +1,5 @@
-#ifndef OBJECT_H
-#define OBJECT_H
+#ifndef O_OBJECT_H
+#define O_OBJECT_H
 
 #include <stdarg.h>
 #include <stddef.h>
@@ -10,22 +10,24 @@
 typedef intptr_t ooc_int;
 typedef uintptr_t ooc_uint;
 
-#undef CLASS
-#define CLASS Object
-#define _Object_PUBLIC_OVERRIDE_METHODS
-#define _Object_PUBLIC_METHODS \
-    (_Object_ctor),      \
-    (_Object_dtor),      \
-    (_Object_equals),    \
-    (_Object_hash_code), \
-    (_Object_inspect)
-#define _Object_PRIVATE_METHODS
-#define _Object_ctor      ctor,       void,   (va_list * args_ptr, args_ptr)
-#define _Object_dtor      dtor,       void
-#define _Object_equals    equals,     bool,   (void * obj, obj)
-#define _Object_hash_code hash_code,  size_t
-#define _Object_inspect   inspect,    char *
-def_public_methods()
+#undef O_CLASS
+#undef O_PARENT
+#define O_CLASS Object
+#define O_PARENT Object
+#define O_Object_OVERRIDE_METHODS_LEN 0
+#define O_Object_PUBLIC_METHODS_LEN 5
+#define O_Object_PRIVATE_METHODS_LEN 0
+#define O_Object_PUBLIC_METHOD_0 ctor,       void,   (va_list * args_ptr, args_ptr)
+#define O_Object_PUBLIC_METHOD_1 dtor,       void
+#define O_Object_PUBLIC_METHOD_2 equals,     bool,   (void * obj, obj)
+#define O_Object_PUBLIC_METHOD_3 hash_code,  ooc_uint
+#define O_Object_PUBLIC_METHOD_4 inspect,    char *
+#define O_Object_ctor      O_PUBLIC_METHOD_0
+#define O_Object_dtor      O_PUBLIC_METHOD_1
+#define O_Object_equals    O_PUBLIC_METHOD_2
+#define O_Object_hash_code O_PUBLIC_METHOD_3
+#define O_Object_inspect   O_PUBLIC_METHOD_4
+O_DEF_GLOBAL_METHODS()
 
 void * new(const void * klass, ...);
 void   delete(void * obj);

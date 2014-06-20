@@ -7,7 +7,7 @@
 #include "file.struct.h"
 #include "inttype.h"
 
-def_class(File, Object)
+O_DEF_CLASS(File, Object)
 
 override
 def(ctor, void : va_list * @args_ptr) {

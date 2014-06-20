@@ -6,7 +6,7 @@
 
 #define DEFAULT_SIZE 2
 
-def_class(Array, Object)
+O_DEF_CLASS(Array, Object)
 
 override
 def(ctor, void : va_list * @args_ptr) {
