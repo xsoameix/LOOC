@@ -3,16 +3,19 @@
 #include <string.h>
 
 #include "object.struct.h"
+#include "object_type.h"
 #include "inttype.h"
 
-static void   class_ctor(void * self, va_list * args_ptr);
-static void   class_dtor(void * self);
-static void   object_ctor(void * self, va_list * args_ptr);
-static void   object_dtor(void * self);
-static bool   object_equals(void * self, void * obj);
-static uint_t object_hash_code(void * self);
-static char * object_inspect(void * self);
-static uint_t size_of(const void * obj);
+static void         class_ctor       (struct Object * self, va_list * args_ptr);
+static void         class_dtor       (struct Object * self);
+static void         object_ctor      (struct Object * self, va_list * args_ptr);
+static void         object_dtor      (struct Object * self);
+static bool         object_equals    (struct Object * self, o obj);
+static uint_t       object_hash_code (struct Object * self);
+static char *       object_inspect   (struct Object * self);
+static const void * object_class     (struct Object * self);
+static char *       object_class_name(struct Object * self);
+static bool         object_is_a      (struct Object * self, const void * class);
 
 static struct ObjectClass classes[2] = {
     {
@@ -25,7 +28,10 @@ static struct ObjectClass classes[2] = {
         class_dtor,
         object_equals,
         object_hash_code,
-        object_inspect
+        object_inspect,
+        object_class,
+        object_class_name,
+        object_is_a
     }, {
         classes,
         0,
@@ -36,21 +42,24 @@ static struct ObjectClass classes[2] = {
         object_dtor,
         object_equals,
         object_hash_code,
-        object_inspect
+        object_inspect,
+        object_class,
+        object_class_name,
+        object_is_a
     }
 };
 
 const void * Class = classes;
 const void * Object = classes + 1;
 
-void *
+o
 new(const void * klass, ...) {
     const struct ObjectClass * class = klass;
     va_list args;
     va_start(args, klass);
-    struct ObjectClass * obj;
+    struct Object * obj;
     if(class->is_variable_size) {
-        class->ctor(&obj, &args);
+        class->ctor((o) &obj, &args);
         obj->class = class;
     } else {
         obj = malloc(class->size);
@@ -62,29 +71,37 @@ new(const void * klass, ...) {
 }
 
 void
-delete(void * obj) {
+delete(o obj) {
     const struct Object * object = obj;
     object->class->dtor(obj);
 }
 
+// #constructor
+
 void
-Object_ctor(void * self, va_list * args_ptr) {
-    struct ObjectClass * class = self;
+Object_ctor(o self, va_list * args_ptr) {
+    struct Object * class = self;
     class->class->ctor(class, args_ptr);
 }
 
 static void
-object_ctor(void * self, va_list * args_ptr) {
+object_ctor(struct Object * self, va_list * args_ptr) {
 }
 
 static void
-class_ctor(void * self, va_list * args_ptr) {
-    struct ObjectClass * class = self;
+class_ctor(struct Object * self, va_list * args_ptr) {
+
+    struct ObjectClass * class = (struct ObjectClass *) self;
     class->super = va_arg(* args_ptr, struct ObjectClass *);
     class->name = va_arg(* args_ptr, char *);
     class->size = va_arg(* args_ptr, uint_t);
     class->is_variable_size = va_arg(* args_ptr, uint_t);
     uint_t offset = offsetof(struct ObjectClass, ctor);
+
+    uint_t size_of(const void * obj) {
+        const struct Object * object = obj;
+        return object->class->size;
+    }
 
     // inherit
     memcpy((char *) class + offset,
@@ -108,60 +125,110 @@ class_ctor(void * self, va_list * args_ptr) {
             *(func *) &class->hash_code = method;
         } else if(select == (func) Object_inspect) {
             *(func *) &class->inspect = method;
+        } else if(select == (func) Object_class) {
+            *(func *) &class->class = method;
+        } else if(select == (func) Object_class_name) {
+            *(func *) &class->class_name = method;
+        } else if(select == (func) Object_is_a) {
+            *(func *) &class->is_a = method;
         }
     }
 }
 
+// #destructor
+
 void
-Object_dtor(void * self) {
+Object_dtor(o self) {
     // Please use delete() instead.
 }
 
 static void
-object_dtor(void * self) {
+object_dtor(struct Object * self) {
     free(self);
 }
 
 static void
-class_dtor(void * self) {
+class_dtor(struct Object * self) {
 }
 
+// #equals
+
 bool
-Object_equals(void * self, void * obj) {
-    struct ObjectClass * class = self;
+Object_equals(o self, o obj) {
+    struct Object * class = self;
     return class->class->equals(class, obj);
 }
 
 static bool
-object_equals(void * self, void * obj) {
+object_equals(struct Object * self, o obj) {
     return self == obj;
 }
 
+// #hash_code
+
 uint_t
-Object_hash_code(void * self) {
-    struct ObjectClass * class = self;
+Object_hash_code(o self) {
+    struct Object * class = self;
     return class->class->hash_code(class);
 }
 
 static uint_t
-object_hash_code(void * self) {
+object_hash_code(struct Object * self) {
     return (uint_t) self;
 }
 
+// #inspect
+
 char *
-Object_inspect(void * self) {
-    struct ObjectClass * class = self;
+Object_inspect(o self) {
+    struct Object * class = self;
     return class->class->inspect(class);
 }
 
 static char *
-object_inspect(void * self) {
-    struct Object * object = self;
-    return object->class->name;
+object_inspect(struct Object * self) {
+    return self->class->name;
 }
 
-static uint_t
-size_of(const void * obj) {
-    const struct Object * object = obj;
-    return object->class->size;
+// #class
+
+const void *
+Object_class(o self) {
+    struct Object * class = self;
+    return class->class->class(class);
+}
+
+static const void *
+object_class(struct Object * self) {
+    return self->class;
+}
+
+// #class_name
+
+char *
+Object_class_name(o self) {
+    struct Object * class = self;
+    return class->class->class_name(class);
+}
+
+static char *
+object_class_name(struct Object * self) {
+    return self->class->name;
+}
+
+// #is_a
+
+bool
+Object_is_a(o self, const void * class) {
+    struct Object * klass = self;
+    return klass->class->is_a(klass, class);
+}
+
+static bool
+object_is_a(struct Object * self, const void * class) {
+    struct ObjectClass * klass = (o) self->class;
+    while(klass != class && klass->super) {
+        klass = (o) klass->super;
+    }
+    return klass == class;
 }

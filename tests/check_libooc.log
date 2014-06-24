@@ -1,0 +1,6 @@
+Running suite(s): libooc
+ Macro
+WrongMethodError: calling String#strip on #<Object:0x1da0ce0>
+ Object
+ Array
+100%: Checks: 3, Failures: 0, Errors: 0

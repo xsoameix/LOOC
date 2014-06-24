@@ -6,12 +6,13 @@
 #include "string.conflict.h"
 #include "value.h"
 #include "inttype.h"
+#include "object_type.h"
 
 const void * StaticString;
 
-static void   StaticString_dtor(void * self);
-static bool   StaticString_equals(void * _self, void * _obj);
-static uint_t StaticString_hash_code(void * self);
+static void   StaticString_dtor(o self);
+static bool   StaticString_equals(o _self, o _obj);
+static uint_t StaticString_hash_code(o self);
 
 void
 Value_init(void) {
@@ -46,11 +47,11 @@ Value_get_str(Value * value) {
 }
 
 static void
-StaticString_dtor(void * self) {
+StaticString_dtor(o self) {
 }
 
 static bool
-StaticString_equals(void * _self, void * _obj) {
+StaticString_equals(o _self, o _obj) {
     Value * self = _self;
     Value * obj = _obj;
     return (((struct Object *) obj)->class == StaticString &&
@@ -58,7 +59,7 @@ StaticString_equals(void * _self, void * _obj) {
 }
 
 static uint_t
-StaticString_hash_code(void * self) {
+StaticString_hash_code(o self) {
     Value * value = self;
     char * string = Value_get_str(value);
     uint_t len = strlen(string);

@@ -12,26 +12,17 @@ Array_print(void * value, uint_t index) {
     printf("%zu: %s\n", index, Value_get_str(value));
 }
 
-static void
-write_file(void * null, void * file) {
-    File_puts(file, "hello");
-    File_printf(file, " w%drld", 0);
-}
-
 int main(void) {
     // static string
-    Value_init();
     Value a;
     Value_type(&a, StaticString);
     Value_set_str(&a, "a");
     Value_get_str(&a);
 
     // string
-    String_init();
     void * b = new(String, "b");
 
     // hash
-    Hash_init();
     void * hash = new(Hash);
     Hash_set(hash, &a, b);
     void * c = Hash_get(hash, &a);
@@ -39,7 +30,6 @@ int main(void) {
     delete(hash);
 
     // array
-    Array_init();
     void * ary = new(Array);
     Array_push(ary, &a);
     Array_unshift(ary, b);
@@ -50,13 +40,17 @@ int main(void) {
     delete(b);
 
     // file
-    File_init();
     void * file = new(File, "libooc/example");
     void * content = File_read(file);
     puts(Object_inspect(content));
     delete(file);
 
+    void write_file(void * file) {
+        File_puts(file, "hello");
+        File_printf(file, " w%drld", 0);
+    }
+
     file = new(File, "libooc/example-2");
-    File_open(file, "w", write_file, NULL);
+    File_open(file, "w", write_file);
     delete(file);
 }

@@ -7,7 +7,7 @@
 struct File {
     struct Object super;
     char * filename;
-    void * content;
+    o_obj content;
     FILE * file;
 };
 

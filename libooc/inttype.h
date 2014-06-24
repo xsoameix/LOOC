@@ -1,5 +1,5 @@
-#ifndef O_INTTYPE_H
-#define O_INTTYPE_H
+#ifndef O__INTTYPE_H
+#define O__INTTYPE_H
 
 #include <inttypes.h>
 
