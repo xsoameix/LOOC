@@ -14,13 +14,16 @@ liboocinclude_HEADERS = \
     object.h            \
     hash.struct.h       \
     hash.h              \
+    hash_macro.h        \
     string.struct.h     \
     string.conflict.h   \
     array.struct.h      \
     array.h             \
+    array_macro.h       \
     value.h             \
     file.h              \
-    inttype.h
+    inttype.h           \
+    object_type.h
 
 # libooc
 bin_PROGRAMS = bin/example

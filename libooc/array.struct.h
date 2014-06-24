@@ -8,7 +8,7 @@ struct Array {
     struct Object super;
     o_uint len;
     o_uint capa;
-    void ** values;
+    o_obj * values;
 };
 
 O_DEF_CLASS_STRUCT()

@@ -6,8 +6,8 @@
 
 struct HashEntry {
     o_uint used;
-    void * key;
-    void * data;
+    o_obj key;
+    o_obj data;
 };
 
 struct Hash {

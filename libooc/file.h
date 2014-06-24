@@ -15,8 +15,8 @@ void File_printf(void * _self, const char * format, ...);
 #define O_File_PRIVATE_METHODS_LEN 0
 #define O_File_OVERRIDE_METHOD_0 ctor, void, (va_list * args_ptr, args_ptr)
 #define O_File_OVERRIDE_METHOD_1 dtor, void
-#define O_File_PUBLIC_METHOD_0 read, void *
-#define O_File_PUBLIC_METHOD_1 open, void, (const char * mode, mode), (void (* func)(void * self, void * file), func), (void * _self_, _self_)
+#define O_File_PUBLIC_METHOD_0 read, o_obj
+#define O_File_PUBLIC_METHOD_1 open, void, (const char * mode, mode), (void (* func)(o_obj file), func)
 #define O_File_ctor O_File_OVERRIDE_METHOD_0
 #define O_File_dtor O_File_OVERRIDE_METHOD_1
 #define O_File_read O_File_PUBLIC_METHOD_0
