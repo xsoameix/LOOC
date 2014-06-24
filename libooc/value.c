@@ -5,12 +5,14 @@
 #include "string.struct.h"
 #include "string.conflict.h"
 #include "value.h"
+#include "inttype.h"
+#include "object_type.h"
 
 const void * StaticString;
 
-static void   StaticString_dtor(void * self);
-static bool   StaticString_equals(void * _self, void * _obj);
-static size_t StaticString_hash_code(void * self);
+static void   StaticString_dtor(o self);
+static bool   StaticString_equals(o _self, o _obj);
+static uint_t StaticString_hash_code(o self);
 
 void
 Value_init(void) {
@@ -25,7 +27,7 @@ Value_init(void) {
                 Object_dtor,      StaticString_dtor,
                 Object_equals,    StaticString_equals,
                 Object_hash_code, StaticString_hash_code,
-                0);
+                (uint_t) 0);
     }
 }
 
@@ -45,24 +47,24 @@ Value_get_str(Value * value) {
 }
 
 static void
-StaticString_dtor(void * self) {
+StaticString_dtor(o self) {
 }
 
 static bool
-StaticString_equals(void * _self, void * _obj) {
+StaticString_equals(o _self, o _obj) {
     Value * self = _self;
     Value * obj = _obj;
     return (((struct Object *) obj)->class == StaticString &&
             strcmp(Value_get_str(self), Value_get_str(obj)) == 0);
 }
 
-static size_t
-StaticString_hash_code(void * self) {
+static uint_t
+StaticString_hash_code(o self) {
     Value * value = self;
     char * string = Value_get_str(value);
-    size_t len = strlen(string);
-    size_t hval = len;
-    for(size_t i = 0; i < len; i++) {
+    uint_t len = strlen(string);
+    uint_t hval = len;
+    for(uint_t i = 0; i < len; i++) {
         hval <<= 4;
         hval += string[i];
     }

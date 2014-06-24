@@ -23,6 +23,9 @@ AC_PROG_CC_C99
 # Checks for library functions.
 AC_FUNC_MALLOC
 
+# Test Framework
+PKG_CHECK_MODULES([CHECK], [check >= 0.9.4])
+
 AC_CONFIG_FILES([
 libooc-0.0.1.pc
 Makefile

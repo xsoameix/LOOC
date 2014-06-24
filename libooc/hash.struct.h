@@ -1,22 +1,22 @@
-#ifndef HASH_STRUCT_H
-#define HASH_STRUCT_H
+#ifndef O_HASH_STRUCT_H
+#define O_HASH_STRUCT_H
 
 #include <libooc/object.struct.h>
 #include <libooc/hash.h>
 
 struct HashEntry {
-    size_t used;
-    void * key;
-    void * data;
+    o_uint used;
+    o_obj key;
+    o_obj data;
 };
 
 struct Hash {
     struct Object super;
-    size_t capa;
-    size_t len;
+    o_uint capa;
+    o_uint len;
     struct HashEntry * entries;
 };
 
-def_class_struct()
+O_DEF_CLASS_STRUCT()
 
 #endif
