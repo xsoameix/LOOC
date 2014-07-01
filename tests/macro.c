@@ -3,13 +3,11 @@
 
 START_TEST(wrong_method_error) {
     o_obj obj = new(Object);
-    o_obj str = new(String, "a");
     char buf[BUFSIZ];
     setbuf(stderr, buf);
     String_strip(obj);
     char * err = "WrongMethodError: calling String#strip on #<Object:0x";
     ck_assert(strncmp(buf, err, strlen(err)) == 0);
-    delete(str);
     delete(obj);
 } END_TEST
 
