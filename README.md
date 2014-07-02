@@ -173,8 +173,8 @@ Run:
         o b = new(String, "b");
 
         o hash = new(Hash);
-        Hash_set(hash, a, b);
-        Hash_get(hash, a);
+        H_SET(hash, a, b);
+        H_GET(hash, a); // => b
 
         // nested function (gcc extension)
         H_ITOR(print) {
@@ -184,11 +184,23 @@ Run:
         H_EACH(hash, print);
         delete(hash);
 
+    If you have name conflict problem:
+
+        o_obj hash = new(Hash);
+        Hash_set(hash, a, b);
+        Hash_get(hash, a);
+
+        void print(o_obj key, o_obj value) {
+            printf("key: %s, value: %s\n", key, value);
+        }
+
+        Hash_each(hash, print);
+
 *   Array
 
         o ary = new(Array);
-        Array_push(ary, a);
-        Array_push(ary, b);
+        PUSH(ary, a);
+        PUSH(ary, b);
 
         ITOR(print) {
             printf("%zu: %s\n", INDEX, Object_inspect(ITEM));
@@ -196,6 +208,18 @@ Run:
 
         EACH(ary, print);
         delete(ary);
+
+    If you have name conflict problem:
+
+        o_obj ary = new(Array);
+        Array_push(ary, a);
+        Array_push(ary, b);
+
+        void print(o_obj item, o_uint index) {
+            printf("%zu: %s\n", index, Object_inspect(item));
+        }
+
+        Array_each(ary, print);
 
 #   Copying
 
